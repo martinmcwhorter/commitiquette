@@ -1,12 +1,12 @@
 import { Rules } from '@commitlint/load';
-import { Question, Choice } from 'inquirer';
-import commitTypes from 'conventional-commit-types'
+import { ChoiceOptions, ListQuestion, DistinctQuestion } from 'inquirer';
+import commitTypes from 'conventional-commit-types';
 import { getLongest } from './utils';
 
-export function buildType(rules: Rules, questions: Question[]): Question[] {
+export function buildType(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
   const [, , typeEnum] = rules['type-enum'] ?? [, , null];
 
-  let choices: Choice[] | undefined;
+  let choices: ChoiceOptions[] | undefined;
   if (typeEnum && typeEnum.length > 0) {
     const longest = getLongest(typeEnum);
     choices = typeEnum.map(value => ({
@@ -19,7 +19,7 @@ export function buildType(rules: Rules, questions: Question[]): Question[] {
   const name = 'type';
   const message = "Select the type of change you're committing:\n";
 
-  const question: Question = {
+  const question: ListQuestion = {
     name,
     message,
     type: 'list',
@@ -28,5 +28,3 @@ export function buildType(rules: Rules, questions: Question[]): Question[] {
 
   return [...questions, question];
 }
-
-

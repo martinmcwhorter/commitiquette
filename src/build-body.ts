@@ -1,9 +1,8 @@
 import { Rules } from '@commitlint/load';
-import { Question } from 'inquirer';
+import { DistinctQuestion } from 'inquirer';
 
-export function buildBody(rules: Rules, questions: Question[]): Question[] {
-
-  const question: Question = {
+export function buildBody(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
+  const question: DistinctQuestion = {
     type: 'input',
     name: 'body',
     message: 'Provide a longer description of the change:'

@@ -1,9 +1,8 @@
 import { Rules } from '@commitlint/load';
-import { Question } from 'inquirer';
+import { DistinctQuestion } from 'inquirer';
 
-export function buildBreakingChange(rules: Rules, questions: Question[]): Question[] {
-
-  const breakingQuestions: Question[] = [
+export function buildBreakingChange(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
+  const breakingQuestions: DistinctQuestion[] = [
     {
       type: 'confirm',
       name: 'isBreaking',
@@ -14,10 +13,7 @@ export function buildBreakingChange(rules: Rules, questions: Question[]): Questi
       type: 'input',
       name: 'breakingBody',
       message: 'A BREAKING CHANGE commit requires a body. Please enter a longer description of the commit itself: ',
-      when: (answers: {
-        isBreaking: boolean;
-        body: string;
-      }) => answers.isBreaking && !answers.body
+      when: answers => answers.isBreaking && !answers.body
     }
   ];
 

@@ -1,18 +1,19 @@
 import { Rules } from '@commitlint/load';
-import { Question } from 'inquirer';
+import { DistinctQuestion } from 'inquirer';
 import { validate, maxLength } from './validators';
 
-export function buildSubject(rules: Rules, questions: Question[]): Question[] {
-
-  const question: Question = {
+export function buildSubject(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
+  const question: DistinctQuestion = {
     message: 'Write a short, imperative tense description of the change:\n',
     name: 'subject',
     type: 'input',
-    validate(value: string, answers: {
-      type: string;
-      scope?: string;
-    }) {
-
+    validate(
+      value: string,
+      answers: {
+        type: string;
+        scope?: string;
+      }
+    ) {
       let header = `${answers.type}`;
       if (answers.scope) {
         header += `(${answers.scope})`;
@@ -24,13 +25,13 @@ export function buildSubject(rules: Rules, questions: Question[]): Question[] {
           value,
           rule: rules['subject-max-length'],
           validator: maxLength,
-          message: (length) => `Subject cannot be longer than ${length} chars`
+          message: length => `Subject cannot be longer than ${length} chars`
         },
         {
           value: header,
           rule: rules['header-max-length'],
           validator: maxLength,
-          message: (length) => `Header "${header}" cannot be longer than ${length} chars`
+          message: length => `Header "${header}" cannot be longer than ${length} chars`
         }
       ]);
 
