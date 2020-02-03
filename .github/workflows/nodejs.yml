@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: wagoid/commitlint-github-action@v1
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -27,6 +30,5 @@ jobs:
         flags: unittests
         name: codecov-umbrella
     - run: npm run lint
-    - run: npm run commitlint
       env:
         CI: true
