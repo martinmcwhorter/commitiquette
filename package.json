@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint . --ext .ts"
   },
   "keywords": [
     "commitizen",
@@ -33,17 +34,21 @@
   },
   "config": {
     "commitizen": {
-      "path": "./dist/index.js"
+      "path": "cz-conventional-changelog"
     }
   },
   "dependencies": {
+    "change-case": "^4.1.1",
     "conventional-commit-types": "^3.0.0",
     "enquirer": "^2.3.4",
-    "right-pad": "^1.0.1"
+    "right-pad": "^1.0.1",
+    "word-wrap": "^1.2.3"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+      "commit-msg": "commitLint -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
