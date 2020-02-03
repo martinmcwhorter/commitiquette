@@ -6,8 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc -p tsconfig.build.json",
-    "lint": "eslint .",
-    "commitlint": "commitlint --from HEAD~1 --to HEAD"
+    "lint": "eslint ."
   },
   "keywords": [
     "commitizen",
