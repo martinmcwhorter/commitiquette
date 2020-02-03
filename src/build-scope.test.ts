@@ -17,7 +17,7 @@ describe('buildScope', () => {
 
       if (typeof scopeConfig.when == 'function') {
         const result = scopeConfig.when({});
-        expect(result).toBeFalsy();
+        expect(result).toBe(false);
       }
     });
 
