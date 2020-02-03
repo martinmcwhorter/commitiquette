@@ -1,66 +1,68 @@
-import { Rule, Level, Applicability } from "@commitlint/load";
+import { Rule, Level, Applicability, Case } from '@commitlint/load';
+import { wordCase } from './utils';
+
+type ValidateRulesWithRuleValue = (value: string, ruleValue: number) => boolean;
+type ValidateRulesWithCaseValue = (value: string, ruleValue: Case) => boolean;
+type ValidatorRulesWithoutValue = (value: string) => boolean;
+type Validator = ValidateRulesWithRuleValue | ValidatorRulesWithoutValue | ValidateRulesWithCaseValue;
 
 export function validate(
   validators: {
-    value: string | null,
-    rule: Rule<number | null> | undefined,
-    validator: (value: string, ruleValue: number, applicable: Applicability) => boolean,
-    message: (length: number | number) => string
-  }[]): string | true {
-
-    const errorMessages: string[] = validators.map(v => {
-
+    value: string;
+    rule: Rule<number | Case | undefined> | undefined;
+    validator: Validator;
+    message: (length?: number | Case, applicable?: Applicability) => string;
+  }[]
+): string | true {
+  const errorMessages: string[] = validators
+    .map(v => {
       if (v.rule == undefined) {
         return true;
       }
 
-      const [level, applicable, length] = v.rule;
+      const [level, applicable, ruleValue] = v.rule;
 
       if (level !== Level.Error) {
         return true;
       }
 
-      if (length == null) {
-        return true;
-      }
+      let valid = v.validator(v.value, ruleValue as never);
 
-      if (v.value == null) {
-        if (applicable === 'never') {
-          return true;
-        } else {
-          return v.message(length);
-        }
+      if (applicable == 'never') {
+        valid = !valid;
       }
-
-      const valid = v.validator(v.value, length, applicable);
 
       if (!valid) {
-        return v.message(length);
+        return v.message(ruleValue, applicable);
       }
 
       return true;
+    })
+    .filter(message => message !== true) as string[];
 
-    }).filter(message => message !== true) as string[];
-
-    if (errorMessages.length === 0) {
-      return true;
-    }
-
-    return errorMessages.join('\n');
-}
-
-
-export function maxLength(value: string, length: number, applicable: Applicability): boolean {
-
-  if (value.length <= length) {
-    return applicable === 'always';
+  if (errorMessages.length === 0) {
+    return true;
   }
 
-  return false
+  return errorMessages.join('\n');
 }
 
-export function maxLineLenth(value: string, length: number, applicable: Applicability): boolean {
-
-  return value.split(/\r?\n/).every(line => maxLength(line, length, applicable));
+export function maxLengthValidator(value: string, length: number): boolean {
+  return value.length <= length;
 }
 
+export function maxLineLengthValidator(value: string, length: number): boolean {
+  return value.split(/\r?\n/).every(line => maxLengthValidator(line, length));
+}
+
+export function minLengthValidator(value: string, length: number): boolean {
+  return value.length >= length;
+}
+
+export function emptyValidator(value: string): boolean {
+  return value.length < 1;
+}
+
+export function caseValidator(value: string, rule: Case): boolean {
+  return value == wordCase(value, rule);
+}
