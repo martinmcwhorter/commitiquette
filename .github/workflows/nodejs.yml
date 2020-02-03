@@ -27,5 +27,6 @@ jobs:
         flags: unittests
         name: codecov-umbrella
     - run: npm run lint
+    - run: npm run commitlint
       env:
         CI: true
