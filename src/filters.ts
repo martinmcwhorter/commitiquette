@@ -1,6 +1,8 @@
-import { Rule, Level } from "@commitlint/load";
+import { Rule, Level, Case } from '@commitlint/load';
+import { wordCase } from './utils';
+import wordWrap from 'word-wrap';
 
-export function leadingBlank(value: string, rule: Rule<void>): string {
+export function leadingBlankFilter(value: string, rule: Rule<void>): string {
   const [level, applicable] = rule;
 
   if (level === Level.Disable) {
@@ -8,8 +10,54 @@ export function leadingBlank(value: string, rule: Rule<void>): string {
   }
 
   if (applicable === 'always') {
-    return value.trimLeft();
+    return '\n' + value.trimLeft();
   }
 
-  return value;
+  return value.trimLeft();
+}
+
+export function fullStopFilter(value: string, rule: Rule<string>): string {
+  const [level, applicable, ruleValue] = rule;
+
+  if (level === Level.Disable) {
+    return value;
+  }
+
+  if (applicable === 'never') {
+    return value.trimRight().endsWith(ruleValue) ? value.trimRight().slice(0, -1) : value;
+  }
+
+  return value.trimRight().endsWith(ruleValue) ? value : value.trimRight() + ruleValue;
+}
+
+export function wordCaseFilter(value: string, rule: Rule<Case> | undefined): string {
+  if (rule == null) {
+    return value;
+  }
+
+  const [level, applicable, ruleValue] = rule;
+
+  if (level === Level.Disable) {
+    return value;
+  }
+
+  if (applicable === 'never') {
+    return value;
+  }
+
+  return wordCase(value, ruleValue);
+}
+
+export function wordWrapFilter(value: string, rule: Rule<number>): string {
+  const [level, applicable, ruleValue] = rule;
+
+  if (level === Level.Disable) {
+    return value;
+  }
+
+  if (applicable === 'never') {
+    return value;
+  }
+
+  return wordWrap(value, { width: ruleValue, indent: '' });
 }
