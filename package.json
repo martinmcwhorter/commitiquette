@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc -p tsconfig.build.json",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint ."
   },
   "keywords": [
     "commitizen",
@@ -25,6 +25,7 @@
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "husky": "^4.2.0",
     "jest": "^25.1.0",
     "lint-staged": "^10.0.2",
@@ -52,12 +53,12 @@
     }
   },
   "lint-staged": {
-    "*.{js,css,json,md}": [
+    "*.{css,json,md}": [
+      "prettier --write",
       "git add"
     ],
-    "*.ts": [
+    "*.{ts,js}": [
       "eslint --fix",
-      "prettier --write",
       "git add"
     ]
   }
