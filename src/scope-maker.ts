@@ -4,16 +4,8 @@ import { whenFactory } from './when';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
 import { wordCaseFilter } from './filters';
 
-export function buildScope(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
-  let choices: string[] | undefined;
-  if (rules['scope-enum']) {
-    const [, , scopeEnum] = rules['scope-enum'];
-    if (scopeEnum && scopeEnum.length > 0) {
-      choices = scopeEnum;
-    }
-  }
-
-  const validateScope = (value: string) => {
+export function validatorFactory(rules: Rules) {
+  return (value: string) => {
     return validate([
       {
         value,
@@ -48,11 +40,26 @@ export function buildScope(rules: Rules, questions: DistinctQuestion[]): Distinc
       }
     ]);
   };
+}
 
+export function choicesFactory(rules: Rules) {
+  let choices: string[] | undefined;
+  if (rules['scope-enum']) {
+    const [, , scopeEnum] = rules['scope-enum'];
+    if (scopeEnum && scopeEnum.length > 0) {
+      choices = scopeEnum;
+    }
+  }
+
+  return choices;
+}
+
+export function scopeMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
   const name = 'scope';
   const message = 'What is the scope of this change:\n';
   const when = whenFactory(rules['scope-enum'], rules['scope-empty']);
   const filter = (value: string) => wordCaseFilter(value, rules['scope-case']);
+  const choices = choicesFactory(rules);
 
   let question: DistinctQuestion;
   if (choices) {
@@ -60,7 +67,7 @@ export function buildScope(rules: Rules, questions: DistinctQuestion[]): Distinc
       name,
       message,
       when,
-      validate: validateScope,
+      validate: validatorFactory(rules),
       filter,
       choices,
       type: 'list'
@@ -70,7 +77,7 @@ export function buildScope(rules: Rules, questions: DistinctQuestion[]): Distinc
       name,
       message,
       when,
-      validate: validateScope,
+      validate: validatorFactory(rules),
       filter,
       type: 'input'
     };

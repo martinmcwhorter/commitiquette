@@ -5,14 +5,14 @@ import { pipeWith } from './utils';
 import { typeMaker } from './type-maker';
 import { buildBreakingChange } from './build-breaking-change';
 import { buildBody } from './build-body';
-import { buildScope } from './build-scope';
+import { scopeMaker } from './scope-maker';
 import { subjectMaker } from './subject-maker';
 
 function buildQuestions(rules: Rules) {
   const combinedQuestions = pipeWith<DistinctQuestion[]>(
     [],
     x => typeMaker(x, rules),
-    x => buildScope(rules, x),
+    x => scopeMaker(x, rules),
     x => subjectMaker(x, rules),
     x => buildBody(rules, x),
     x => buildBreakingChange(rules, x)
