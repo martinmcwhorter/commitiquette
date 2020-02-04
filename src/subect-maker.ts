@@ -1,25 +1,24 @@
-import { Rules, Level } from '@commitlint/load';
-import { DistinctQuestion } from 'inquirer';
+import { Rules } from '@commitlint/load';
+import { DistinctQuestion, Answers } from 'inquirer';
 import { validate, maxLengthValidator, emptyValidator, minLengthValidator, caseValidator } from './validators';
 import { wordCaseFilter, fullStopFilter } from './filters';
 import { pipeWith, valueFromRule } from './utils';
-import inquirer = require('inquirer');
 
-export function buildSubject(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
-  const header = (type: string, scope?: string, subject?: string) => {
-    let header = `${type}`;
-    if (scope) {
-      header += `(${scope})`;
-    }
-    if (subject) {
-      header += subject;
-    }
-    header += ': ';
+export function header(type: string, scope?: string, subject?: string): string {
+  let header = `${type}`;
+  if (scope) {
+    header += `(${scope})`;
+  }
+  if (subject) {
+    header += subject;
+  }
+  header += ': ';
 
-    return header;
-  };
+  return header;
+}
 
-  const validateSubject = (
+export function validatorFactory(rules: Rules) {
+  return (
     value: string,
     answers: {
       type: string;
@@ -27,8 +26,6 @@ export function buildSubject(rules: Rules, questions: DistinctQuestion[]): Disti
     }
   ) => {
     const headerValue = header(answers.type, answers.scope);
-
-    console.log('RULES', rules);
 
     return validate([
       {
@@ -70,19 +67,19 @@ export function buildSubject(rules: Rules, questions: DistinctQuestion[]): Disti
       }
     ]);
   };
+}
 
-  const filter = (value: string) => {
-    const result: string = pipeWith<string>(
+export function filterFactory(rules: Rules) {
+  return (value: string) =>
+    pipeWith<string>(
       value,
       v => wordCaseFilter(v, rules['subject-case']),
       v => fullStopFilter(v, rules['subject-full-stop'])
     );
+}
 
-    console.log('RESLUT', result);
-    return result;
-  };
-
-  const message = (answers: inquirer.Answers) => {
+export function messageFactory(rules: Rules) {
+  return (answers: Answers) => {
     const maxLength = valueFromRule(rules['header-min-length']);
 
     if (!maxLength) {
@@ -92,13 +89,15 @@ export function buildSubject(rules: Rules, questions: DistinctQuestion[]): Disti
     return `Write a short, imperative tense description of the change (max ${maxLength -
       header(answers.type, answers.scope).length} chars):\n`;
   };
+}
 
+export function subjectMaker(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
   const question: DistinctQuestion = {
-    message,
+    message: messageFactory(rules),
     name: 'subject',
     type: 'input',
-    validate: validateSubject,
-    filter
+    validate: validatorFactory(rules),
+    filter: filterFactory(rules)
   };
 
   return [...questions, question];

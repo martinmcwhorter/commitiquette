@@ -4,7 +4,7 @@ import { PromptModule, DistinctQuestion } from 'inquirer';
 import { buildType } from './build-type';
 import { buildBreakingChange } from './build-breaking-change';
 import { buildBody } from './build-body';
-import { buildSubject } from './build-subject';
+import { subjectMaker } from './subect-maker';
 import { buildScope } from './build-scope';
 import { Commit } from 'commitizen';
 
@@ -13,7 +13,7 @@ function buildQuestions(rules: Rules) {
     [],
     x => buildType(rules, x),
     x => buildScope(rules, x),
-    x => buildSubject(rules, x),
+    x => subjectMaker(rules, x),
     x => buildBody(rules, x),
     x => buildBreakingChange(rules, x)
   );
