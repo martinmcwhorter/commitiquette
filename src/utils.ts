@@ -1,4 +1,4 @@
-import { Case } from '@commitlint/load';
+import { Case, Rule, Level } from '@commitlint/load';
 import { snakeCase, pascalCase, sentenceCase, capitalCase, paramCase, camelCase } from 'change-case';
 
 export const pipeWith = <T>(arg: T, ...fns: ((a: T) => T)[]) => fns.reduce((v, f) => f(v), arg);
@@ -38,4 +38,22 @@ export function wordCase(value: string, rule: Case): string {
     default:
       return assertNever(rule);
   }
+}
+
+export function valueFromRule<T>(rule: Rule<T> | undefined): false | T {
+  if (rule == null) {
+    return false;
+  }
+
+  const [level, applicable, value] = rule;
+
+  if (level == Level.Disable) {
+    return false;
+  }
+
+  if (applicable == 'never') {
+    return false;
+  }
+
+  return value;
 }

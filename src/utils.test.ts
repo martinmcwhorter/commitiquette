@@ -1,5 +1,5 @@
-import { getLongest, pipeWith, wordCase } from './utils';
-import { Case } from '@commitlint/load';
+import { getLongest, pipeWith, wordCase, valueFromRule } from './utils';
+import { Case, Level } from '@commitlint/load';
 
 describe('getLongest', () => {
   test('return longest string lenth in array', () => {
@@ -43,5 +43,31 @@ describe('wordCase', () => {
     const result = wordCase(value, rule);
 
     expect(result).toBe(expected);
+  });
+
+  describe('valueFromRule', () => {
+    test('should return false if rule is undefined', () => {
+      const result = valueFromRule(undefined);
+
+      expect(result).toBe(false);
+    });
+
+    test('should return false if disabled', () => {
+      const result = valueFromRule([Level.Disable, 'always', 72]);
+
+      expect(result).toBe(false);
+    });
+
+    test('should return false if applicable never', () => {
+      const result = valueFromRule([Level.Error, 'never', 72]);
+
+      expect(result).toBe(false);
+    });
+
+    test('should return value of rule', () => {
+      const result = valueFromRule([Level.Error, 'always', 72]);
+
+      expect(result).toBe(72);
+    });
   });
 });
