@@ -1,5 +1,6 @@
 import { validate, maxLengthValidator, emptyValidator, minLengthValidator, caseValidator } from './validators';
 import { Level } from '@commitlint/load';
+import { camelCase } from 'change-case';
 
 describe('validators', () => {
   describe('validate', () => {
@@ -131,6 +132,47 @@ describe('validators', () => {
 
       expect(result).toBe('foo\nbar\nbaz');
     });
+
+    describe('caseValidator', () => {
+      test('should return true when multiple cases are passed to caseValidator', () => {
+        const result = validate([
+          {
+            value: 'foo',
+            rule: [Level.Error, 'always', ['lower-case', 'camel-case']],
+            validator: caseValidator,
+            message: () => 'error'
+          }
+        ]);
+
+        expect(result).toBe(true);
+      });
+
+      test('should return error message when multiple cases are passed to caseValidator', () => {
+        const result = validate([
+          {
+            value: 'FOO',
+            rule: [Level.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
+            validator: caseValidator,
+            message: () => 'error'
+          }
+        ]);
+
+        expect(result).toBe('error');
+      });
+
+      test('should return true message when multiple cases are passed to caseValidator', () => {
+        const result = validate([
+          {
+            value: 'foo bar baz buz',
+            rule: [Level.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
+            validator: caseValidator,
+            message: () => 'error'
+          }
+        ]);
+
+        expect(result).toBe(true);
+      });
+    });
   });
 
   describe('maxLengthValidator', () => {
@@ -185,8 +227,20 @@ describe('validators', () => {
       expect(result).toBe(true);
     });
 
-    test('should be invalid if the value does not matche case', () => {
+    test('should be invalid if the value does not match case', () => {
       const result = caseValidator('FOO', 'lower-case');
+
+      expect(result).toBe(false);
+    });
+
+    test('should match all when multiple array is passed', () => {
+      const result = caseValidator('foo', ['camel-case', 'lower-case']);
+
+      expect(result).toBe(true);
+    });
+
+    test('should be invalid when multiple array is passed', () => {
+      const result = caseValidator('foo bar baz buz', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']);
 
       expect(result).toBe(false);
     });

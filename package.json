@@ -35,7 +35,7 @@
   },
   "config": {
     "commitizen": {
-      "path": "cz-conventional-changelog"
+      "path": "./dist/index.js"
     }
   },
   "dependencies": {

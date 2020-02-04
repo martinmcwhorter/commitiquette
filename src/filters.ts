@@ -16,7 +16,11 @@ export function leadingBlankFilter(value: string, rule: Rule<void>): string {
   return value.trimLeft();
 }
 
-export function fullStopFilter(value: string, rule: Rule<string>): string {
+export function fullStopFilter(value: string, rule: Rule<string> | undefined): string {
+  if (rule == null) {
+    return value;
+  }
+
   const [level, applicable, ruleValue] = rule;
 
   if (level === Level.Disable) {
@@ -30,12 +34,16 @@ export function fullStopFilter(value: string, rule: Rule<string>): string {
   return value.trimRight().endsWith(ruleValue) ? value : value.trimRight() + ruleValue;
 }
 
-export function wordCaseFilter(value: string, rule: Rule<Case> | undefined): string {
+export function wordCaseFilter(value: string, rule: Rule<Case | Case[]> | undefined): string {
   if (rule == null) {
     return value;
   }
 
   const [level, applicable, ruleValue] = rule;
+
+  if (typeof ruleValue !== 'string') {
+    return value;
+  }
 
   if (level === Level.Disable) {
     return value;

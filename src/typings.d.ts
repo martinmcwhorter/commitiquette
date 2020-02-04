@@ -41,7 +41,7 @@ declare module '@commitlint/load' {
     'scope-empty'?: Rule<undefined>;
     'scope-max-length'?: Rule<number>;
     'scope-min-length'?: Rule<number>;
-    'subject-case'?: Rule<Case>;
+    'subject-case'?: Rule<Case | Case[]>;
     'subject-empty'?: Rule<undefined>;
     'subject-full-stop'?: Rule<string>;
     'subject-max-length'?: Rule<number>;

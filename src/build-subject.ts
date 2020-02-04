@@ -1,27 +1,41 @@
-import { Rules } from '@commitlint/load';
+import { Rules, Level } from '@commitlint/load';
 import { DistinctQuestion } from 'inquirer';
 import { validate, maxLengthValidator, emptyValidator, minLengthValidator, caseValidator } from './validators';
-import { wordCaseFilter } from './filters';
+import { wordCaseFilter, fullStopFilter } from './filters';
+import { pipeWith, valueFromRule } from './utils';
+import inquirer = require('inquirer');
 
 export function buildSubject(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
+  const header = (type: string, scope?: string, subject?: string) => {
+    let header = `${type}`;
+    if (scope) {
+      header += `(${scope})`;
+    }
+    if (subject) {
+      header += subject;
+    }
+    header += ': ';
+
+    return header;
+  };
+
   const validateSubject = (
     value: string,
     answers: {
       type: string;
-      Subject?: string;
+      scope: string;
     }
   ) => {
-    let header = `${answers.type}`;
-    if (answers.Subject) {
-      header += `(${answers.Subject})`;
-    }
-    header += `: ${value}`;
+    const headerValue = header(answers.type, answers.scope);
+
+    console.log('RULES', rules);
+
     return validate([
       {
-        value: header,
+        value: headerValue,
         rule: rules['header-max-length'],
         validator: maxLengthValidator,
-        message: length => `Header "${header}" cannot be longer than ${length} chars`
+        message: length => `Header "${headerValue}" cannot be longer than ${length} chars`
       },
       {
         value,
@@ -57,12 +71,34 @@ export function buildSubject(rules: Rules, questions: DistinctQuestion[]): Disti
     ]);
   };
 
+  const filter = (value: string) => {
+    const result: string = pipeWith<string>(
+      value,
+      v => wordCaseFilter(v, rules['subject-case']),
+      v => fullStopFilter(v, rules['subject-full-stop'])
+    );
+
+    console.log('RESLUT', result);
+    return result;
+  };
+
+  const message = (answers: inquirer.Answers) => {
+    const maxLength = valueFromRule(rules['header-min-length']);
+
+    if (!maxLength) {
+      return `Write a short, imperative tense description of the change:\n`;
+    }
+
+    return `Write a short, imperative tense description of the change (max ${maxLength -
+      header(answers.type, answers.scope).length} chars):\n`;
+  };
+
   const question: DistinctQuestion = {
-    message: 'Write a short, imperative tense description of the change:\n',
+    message,
     name: 'subject',
     type: 'input',
     validate: validateSubject,
-    filter: value => wordCaseFilter(value, rules['subject-case'])
+    filter
   };
 
   return [...questions, question];

@@ -2,16 +2,16 @@ import { Rule, Level, Applicability, Case } from '@commitlint/load';
 import { wordCase } from './utils';
 
 type ValidateRulesWithRuleValue = (value: string, ruleValue: number) => boolean;
-type ValidateRulesWithCaseValue = (value: string, ruleValue: Case) => boolean;
+type ValidateRulesWithCaseValue = (value: string, ruleValue: Case, inclusive?: boolean) => boolean;
 type ValidatorRulesWithoutValue = (value: string) => boolean;
 type Validator = ValidateRulesWithRuleValue | ValidatorRulesWithoutValue | ValidateRulesWithCaseValue;
 
 export function validate(
   validators: {
     value: string;
-    rule: Rule<number | Case | undefined> | undefined;
+    rule: Rule<number | Case | Case[] | undefined> | undefined;
     validator: Validator;
-    message: (length?: number | Case, applicable?: Applicability) => string;
+    message: (length?: number | Case | Case[], applicable?: Applicability) => string;
   }[]
 ): string | true {
   const errorMessages: string[] = validators
@@ -26,7 +26,12 @@ export function validate(
         return true;
       }
 
-      let valid = v.validator(v.value, ruleValue as never);
+      let valid: boolean;
+      if (Array.isArray(ruleValue) && applicable == 'never') {
+        valid = v.validator(v.value, ruleValue as never, false);
+      } else {
+        valid = v.validator(v.value, ruleValue as never);
+      }
 
       if (applicable == 'never') {
         valid = !valid;
@@ -63,6 +68,14 @@ export function emptyValidator(value: string): boolean {
   return value.length < 1;
 }
 
-export function caseValidator(value: string, rule: Case): boolean {
-  return value == wordCase(value, rule);
+export function caseValidator(value: string, rule: Case | Case[], inclusive = true): boolean {
+  if (typeof rule === 'string') {
+    return value == wordCase(value, rule);
+  }
+
+  if (inclusive) {
+    return rule.every(r => wordCase(value, r) == value);
+  }
+
+  return rule.some(r => wordCase(value, r) == value);
 }
