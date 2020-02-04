@@ -1,7 +1,7 @@
 import { Rules } from '@commitlint/load';
 import { DistinctQuestion } from 'inquirer';
 import { whenFactory } from './when';
-import { validate, emptyValidator, maxLengthValidator, minLengthValidator, caseValidator } from './validators';
+import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
 import { wordCaseFilter } from './filters';
 
 export function buildScope(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {

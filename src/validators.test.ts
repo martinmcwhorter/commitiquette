@@ -1,6 +1,5 @@
-import { validate, maxLengthValidator, emptyValidator, minLengthValidator, caseValidator } from './validators';
 import { Level } from '@commitlint/load';
-import { camelCase } from 'change-case';
+import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
 
 describe('validators', () => {
   describe('validate', () => {

@@ -1,5 +1,5 @@
-import { getLongest, pipeWith, wordCase, valueFromRule } from './utils';
 import { Case, Level } from '@commitlint/load';
+import { getLongest, pipeWith, valueFromRule, wordCase } from './utils';
 
 describe('getLongest', () => {
   test('return longest string lenth in array', () => {

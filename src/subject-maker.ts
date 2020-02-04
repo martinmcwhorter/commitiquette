@@ -1,8 +1,8 @@
 import { Rules } from '@commitlint/load';
-import { DistinctQuestion, Answers } from 'inquirer';
-import { validate, maxLengthValidator, emptyValidator, minLengthValidator, caseValidator } from './validators';
-import { wordCaseFilter, fullStopFilter } from './filters';
+import { Answers, DistinctQuestion } from 'inquirer';
 import { pipeWith, valueFromRule } from './utils';
+import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
+import { fullStopFilter, wordCaseFilter } from './filters';
 
 export function header(type: string, scope?: string, subject?: string): string {
   let header = `${type}`;
@@ -91,7 +91,7 @@ export function messageFactory(rules: Rules) {
   };
 }
 
-export function subjectMaker(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
+export function subjectMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
   const question: DistinctQuestion = {
     message: messageFactory(rules),
     name: 'subject',

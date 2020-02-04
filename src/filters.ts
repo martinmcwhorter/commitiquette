@@ -1,6 +1,6 @@
-import { Rule, Level, Case } from '@commitlint/load';
-import { wordCase } from './utils';
+import { Case, Level, Rule } from '@commitlint/load';
 import wordWrap from 'word-wrap';
+import { wordCase } from './utils';
 
 export function leadingBlankFilter(value: string, rule: Rule<void>): string {
   const [level, applicable] = rule;

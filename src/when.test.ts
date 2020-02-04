@@ -1,5 +1,5 @@
-import { enumWhen, emptyWhen, whenFactory } from './when';
 import { Level, Rule } from '@commitlint/load';
+import { emptyWhen, enumWhen, whenFactory } from './when';
 
 describe('when', () => {
   describe('enumWhen', () => {

@@ -1,5 +1,5 @@
-import { buildScope } from './build-scope';
 import { ListQuestion } from 'inquirer';
+import { buildScope } from './build-scope';
 
 describe('buildScope', () => {
   describe('when', () => {

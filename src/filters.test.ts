@@ -1,5 +1,5 @@
-import { leadingBlankFilter, fullStopFilter, wordCaseFilter, wordWrapFilter } from './filters';
 import { Level } from '@commitlint/load';
+import { fullStopFilter, leadingBlankFilter, wordCaseFilter, wordWrapFilter } from './filters';
 
 describe('filters', () => {
   describe('leadingBlankFilter', () => {

@@ -1,4 +1,4 @@
-import { Rule, Level, Applicability, Case } from '@commitlint/load';
+import { Applicability, Case, Level, Rule } from '@commitlint/load';
 import { wordCase } from './utils';
 
 type ValidateRulesWithRuleValue = (value: string, ruleValue: number) => boolean;

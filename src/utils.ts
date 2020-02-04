@@ -1,5 +1,5 @@
-import { Case, Rule, Level } from '@commitlint/load';
-import { snakeCase, pascalCase, sentenceCase, capitalCase, paramCase, camelCase } from 'change-case';
+import { Case, Level, Rule } from '@commitlint/load';
+import { camelCase, capitalCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'change-case';
 
 export const pipeWith = <T>(arg: T, ...fns: ((a: T) => T)[]) => fns.reduce((v, f) => f(v), arg);
 

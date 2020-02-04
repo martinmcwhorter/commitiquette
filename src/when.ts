@@ -1,4 +1,4 @@
-import { Rule, Level } from '@commitlint/load';
+import { Level, Rule } from '@commitlint/load';
 
 export function enumWhen(rule: Rule<string[]> | undefined) {
   if (rule == null) {

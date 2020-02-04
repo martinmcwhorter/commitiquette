@@ -1,15 +1,13 @@
 import { Rules } from '@commitlint/load';
-import { ChoiceOptions, ListQuestion, DistinctQuestion } from 'inquirer';
+import { ChoiceOptions, DistinctQuestion, ListQuestion } from 'inquirer';
 import commitTypes from 'conventional-commit-types';
 import { getLongest } from './utils';
-import { validate, emptyValidator, maxLengthValidator, minLengthValidator, caseValidator } from './validators';
+import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
 import { whenFactory } from './when';
 import { wordCaseFilter } from './filters';
 
-export function buildType(rules: Rules, questions: DistinctQuestion[]): DistinctQuestion[] {
-  const [, , typeEnum] = rules['type-enum'] ?? [, , null];
-
-  const validateType = (value: string) => {
+export function validatorFactory(rules: Rules) {
+  return (value: string) => {
     return validate([
       {
         value,
@@ -44,8 +42,14 @@ export function buildType(rules: Rules, questions: DistinctQuestion[]): Distinct
       }
     ]);
   };
+}
 
-  const filter = (value: string) => wordCaseFilter(value, rules['type-case']);
+export function filterFactory(rules: Rules) {
+  return (value: string) => wordCaseFilter(value, rules['type-case']);
+}
+
+export function choicesFactory(rules: Rules) {
+  const [, , typeEnum] = rules['type-enum'] ?? [, , null];
 
   let choices: ChoiceOptions[] | undefined;
   if (typeEnum && typeEnum.length > 0) {
@@ -57,17 +61,18 @@ export function buildType(rules: Rules, questions: DistinctQuestion[]): Distinct
     }));
   }
 
-  const name = 'type';
-  const message = "Select the type of change you're committing:\n";
+  return choices;
+}
 
+export function typeMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
   const question: ListQuestion = {
-    name,
-    message,
+    name: 'type',
+    message: "Select the type of change you're committing:\n",
     type: 'list',
-    choices,
-    validate: validateType,
+    choices: choicesFactory(rules),
+    validate: validatorFactory(rules),
     when: whenFactory(rules['type-enum'], rules['type-empty']),
-    filter
+    filter: filterFactory(rules)
   };
 
   return [...questions, question];

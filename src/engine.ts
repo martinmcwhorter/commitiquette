@@ -1,19 +1,19 @@
 import { CommitlintConfig, Rules } from '@commitlint/load';
+import { DistinctQuestion, PromptModule } from 'inquirer';
+import { Commit } from 'commitizen';
 import { pipeWith } from './utils';
-import { PromptModule, DistinctQuestion } from 'inquirer';
-import { buildType } from './build-type';
+import { typeMaker } from './type-maker';
 import { buildBreakingChange } from './build-breaking-change';
 import { buildBody } from './build-body';
-import { subjectMaker } from './subect-maker';
 import { buildScope } from './build-scope';
-import { Commit } from 'commitizen';
+import { subjectMaker } from './subject-maker';
 
 function buildQuestions(rules: Rules) {
   const combinedQuestions = pipeWith<DistinctQuestion[]>(
     [],
-    x => buildType(rules, x),
+    x => typeMaker(x, rules),
     x => buildScope(rules, x),
-    x => subjectMaker(rules, x),
+    x => subjectMaker(x, rules),
     x => buildBody(rules, x),
     x => buildBreakingChange(rules, x)
   );
