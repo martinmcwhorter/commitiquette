@@ -7,21 +7,19 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [12.x]
-
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 12.x
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+      env:
+        CI: true
     - name: Upload coverage to Codecov  
       uses: codecov/codecov-action@v1
       with:
@@ -30,5 +28,3 @@ jobs:
         name: codecov-umbrella
     - run: npm run lint
     - uses: wagoid/commitlint-github-action@v1
-      env:
-        CI: true
