@@ -1,5 +1,5 @@
 import { Level } from '@commitlint/load';
-import { fullStopFilter, leadingBlankFilter, wordCaseFilter, wordWrapFilter } from './filters';
+import { fullStopFilter, leadingBlankFilter, maxLineLengthFilter, wordCaseFilter } from './filters';
 
 describe('filters', () => {
   describe('leadingBlankFilter', () => {
@@ -92,21 +92,21 @@ describe('filters', () => {
     });
   });
 
-  describe('wordWrapFilter', () => {
+  describe('maxLineLengthFilter', () => {
     test('should change when rule level is not Disable and applicability is not never', () => {
-      const result = wordWrapFilter('foo bar baz buz', [Level.Error, 'always', 4]);
+      const result = maxLineLengthFilter('foo bar baz buz', [Level.Error, 'always', 4]);
 
       expect(result).toBe('foo \nbar \nbaz \nbuz');
     });
 
     test('should NOT change when rule level is Disable', () => {
-      const result = wordWrapFilter('foo bar baz buz', [Level.Disable, 'always', 4]);
+      const result = maxLineLengthFilter('foo bar baz buz', [Level.Disable, 'always', 4]);
 
       expect(result).toBe('foo bar baz buz');
     });
 
     test('should NOT change when rule applicability is not never', () => {
-      const result = wordWrapFilter('foo bar baz buz', [Level.Error, 'never', 4]);
+      const result = maxLineLengthFilter('foo bar baz buz', [Level.Error, 'never', 4]);
 
       expect(result).toBe('foo bar baz buz');
     });

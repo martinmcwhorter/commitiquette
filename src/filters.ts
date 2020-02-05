@@ -2,7 +2,11 @@ import { Case, Level, Rule } from '@commitlint/load';
 import wordWrap from 'word-wrap';
 import { wordCase } from './utils';
 
-export function leadingBlankFilter(value: string, rule: Rule<void>): string {
+export function leadingBlankFilter(value: string, rule: Rule<undefined> | undefined): string {
+  if (rule == null) {
+    return value;
+  }
+
   const [level, applicable] = rule;
 
   if (level === Level.Disable) {
@@ -56,7 +60,11 @@ export function wordCaseFilter(value: string, rule: Rule<Case | Case[]> | undefi
   return wordCase(value, ruleValue);
 }
 
-export function wordWrapFilter(value: string, rule: Rule<number>): string {
+export function maxLineLengthFilter(value: string, rule: Rule<number> | undefined): string {
+  if (rule == null) {
+    return value;
+  }
+
   const [level, applicable, ruleValue] = rule;
 
   if (level === Level.Disable) {

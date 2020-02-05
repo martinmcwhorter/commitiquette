@@ -26,7 +26,7 @@ declare module '@commitlint/load' {
   export type Rules = {
     'body-leading-blank'?: Rule<undefined>;
     'body-max-length'?: Rule<number>;
-    'body-max-line-number'?: Rule<number>;
+    'body-max-line-length'?: Rule<number>;
     'body-min-length'?: Rule<number>;
     'footer-leading-blank'?: Rule<undefined>;
     'footer-max-length'?: Rule<number>;

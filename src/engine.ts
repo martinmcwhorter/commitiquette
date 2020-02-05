@@ -4,7 +4,7 @@ import { Commit } from 'commitizen';
 import { pipeWith } from './utils';
 import { typeMaker } from './type-maker';
 import { buildBreakingChange } from './build-breaking-change';
-import { buildBody } from './build-body';
+import { bodyMaker } from './body-maker';
 import { scopeMaker } from './scope-maker';
 import { subjectMaker } from './subject-maker';
 
@@ -14,7 +14,7 @@ function buildQuestions(rules: Rules) {
     x => typeMaker(x, rules),
     x => scopeMaker(x, rules),
     x => subjectMaker(x, rules),
-    x => buildBody(rules, x),
+    x => bodyMaker(x, rules),
     x => buildBreakingChange(rules, x)
   );
 

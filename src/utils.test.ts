@@ -2,7 +2,7 @@ import { Case, Level } from '@commitlint/load';
 import { getLongest, pipeWith, valueFromRule, wordCase } from './utils';
 
 describe('getLongest', () => {
-  test('return longest string lenth in array', () => {
+  test('return longest string length in array', () => {
     const result = getLongest(['1', '333', '22']);
 
     expect(result).toBe(3);

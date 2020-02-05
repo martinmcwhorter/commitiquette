@@ -1,5 +1,6 @@
 import { Rules } from '@commitlint/load';
 import { Answers, DistinctQuestion } from 'inquirer';
+import { red, green } from 'chalk';
 import { pipeWith, valueFromRule } from './utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
 import { fullStopFilter, wordCaseFilter } from './filters';
@@ -91,13 +92,35 @@ export function messageFactory(rules: Rules) {
   };
 }
 
+export function transformerFactory(rules: Rules) {
+  const filter = filterFactory(rules);
+
+  return (value: string, answers: Answers) => {
+    const headerMaxLength = valueFromRule(rules['header-max-length']);
+
+    if (headerMaxLength) {
+      const color = filter(value).length <= headerMaxLength - header(answers.type, answers.scope).length ? green : red;
+      return color(`(${value.length}) ${value}`);
+    }
+
+    const subjectMaxLength = valueFromRule(rules['header-max-length']);
+    if (subjectMaxLength) {
+      const color = value.length <= subjectMaxLength ? green : red;
+      return color(`(${value.length}) ${value}`);
+    }
+
+    return value;
+  };
+}
+
 export function subjectMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
   const question: DistinctQuestion = {
     message: messageFactory(rules),
     name: 'subject',
     type: 'input',
     validate: validatorFactory(rules),
-    filter: filterFactory(rules)
+    filter: filterFactory(rules),
+    transformer: transformerFactory(rules)
   };
 
   return [...questions, question];

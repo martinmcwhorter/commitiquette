@@ -8,4 +8,4 @@ export async function prompter(cz: { prompt: PromptModule }, commit: Commit) {
   engine(clConfig, cz.prompt, commit);
 }
 
-// prompter({ prompt }, value => console.log(value));
+prompter({ prompt }, value => console.log(value));
