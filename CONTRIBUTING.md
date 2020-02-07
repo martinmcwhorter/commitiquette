@@ -2,6 +2,8 @@
 
 This project aims to be open to contributions.
 
+Please take a look at our open issues and see if you can help.
+
 ## Reporting Bugs
 
 - Be sure the issue you are reporting has not already been reported.
