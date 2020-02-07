@@ -7,6 +7,10 @@ export function leadingBlankFilter(value: string, rule: Rule<undefined> | undefi
     return value;
   }
 
+  if (!value) {
+    return value;
+  }
+
   const [level, applicable] = rule;
 
   if (level === Level.Disable) {

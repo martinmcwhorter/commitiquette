@@ -1,8 +1,8 @@
 import { DistinctQuestion } from 'inquirer';
 import { Rules } from '@commitlint/load';
-import { validate, maxLengthValidator, minLengthValidator } from './validators';
-import { pipeWith } from './utils';
-import { leadingBlankFilter, maxLineLengthFilter } from './filters';
+import { validate, maxLengthValidator, minLengthValidator } from '../validators';
+import { pipeWith } from '../utils';
+import { leadingBlankFilter, maxLineLengthFilter } from '../filters';
 
 export function validatorFactory(rules: Rules) {
   return (value: string) =>
@@ -40,14 +40,31 @@ export function transformerFactory() {
 
 export function bodyMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
   console.log(rules);
-  const question: DistinctQuestion = {
-    type: 'input',
-    name: 'body',
-    message: 'Provide a longer description of the change: (press enter to skip)\n',
-    validate: validatorFactory(rules),
-    filter: filterFactory(rules),
-    transformer: transformerFactory()
-  };
+  const bodyQuestions: DistinctQuestion[] = [
+    {
+      type: 'input',
+      name: 'body',
+      message: 'Provide a longer description of the change: (press enter to skip, \\n for newline)\n',
+      validate: validatorFactory(rules),
+      filter: filterFactory(rules),
+      transformer: transformerFactory()
+    },
+    {
+      type: 'confirm',
+      name: 'isBreaking',
+      message: 'Are there any breaking changes?',
+      default: false
+    },
+    {
+      type: 'input',
+      name: 'body',
+      message:
+        'A BREAKING CHANGE commit requires a body. Please enter a longer description of the commit itself: (press enter to skip, \\n for newline)\n',
+      when: answers => answers.isBreaking && !answers.body.trim(),
+      validate: validatorFactory(rules),
+      transformer: transformerFactory()
+    }
+  ];
 
-  return [...questions, question];
+  return [...questions, ...bodyQuestions];
 }

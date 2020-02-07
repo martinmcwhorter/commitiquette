@@ -1,9 +1,9 @@
 import { Rules } from '@commitlint/load';
 import { Answers, DistinctQuestion } from 'inquirer';
 import { red, green } from 'chalk';
-import { pipeWith, valueFromRule } from './utils';
-import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
-import { fullStopFilter, wordCaseFilter } from './filters';
+import { pipeWith, valueFromRule } from '../utils';
+import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
+import { fullStopFilter, wordCaseFilter } from '../filters';
 
 export function header(type: string, scope?: string, subject?: string): string {
   let header = `${type}`;

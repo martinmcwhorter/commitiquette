@@ -1,8 +1,8 @@
 import { Rules } from '@commitlint/load';
 import { DistinctQuestion } from 'inquirer';
-import { whenFactory } from './when';
-import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
-import { wordCaseFilter } from './filters';
+import { whenFactory } from '../when';
+import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
+import { wordCaseFilter } from '../filters';
 
 export function validatorFactory(rules: Rules) {
   return (value: string) => {

@@ -1,10 +1,10 @@
 import { Rules } from '@commitlint/load';
 import { ChoiceOptions, DistinctQuestion, ListQuestion } from 'inquirer';
 import commitTypes from 'conventional-commit-types';
-import { getLongest } from './utils';
-import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
-import { whenFactory } from './when';
-import { wordCaseFilter } from './filters';
+import { getLongest } from '../utils';
+import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
+import { whenFactory } from '../when';
+import { wordCaseFilter } from '../filters';
 
 export function validatorFactory(rules: Rules) {
   return (value: string) => {
