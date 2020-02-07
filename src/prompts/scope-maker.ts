@@ -9,12 +9,6 @@ export function validatorFactory(rules: Rules) {
     return validate([
       {
         value,
-        rule: rules['scope-empty'],
-        validator: emptyValidator,
-        message: () => 'Scope of commit must be supplied'
-      },
-      {
-        value,
         rule: rules['scope-max-length'],
         validator: maxLengthValidator,
         message: length => `Scope maximum length of ${length} has been exceeded`
@@ -33,10 +27,9 @@ export function validatorFactory(rules: Rules) {
       },
       {
         value,
-        rule: rules['type-case'],
+        rule: rules['scope-case'],
         validator: caseValidator,
-        message: (ruleValue, applicable) =>
-          `Scope must ${applicable == 'never' ? 'not' : 'ruleValue'} be in ${ruleValue}`
+        message: (ruleValue, applicable) => `Scope must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`
       }
     ]);
   };
@@ -54,11 +47,14 @@ export function choicesFactory(rules: Rules) {
   return choices;
 }
 
+export function filterFactory(rules: Rules) {
+  return (value: string) => wordCaseFilter(value, rules['scope-case']);
+}
+
 export function scopeMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
   const name = 'scope';
   const message = 'What is the scope of this change:\n';
   const when = whenFactory(rules['scope-enum'], rules['scope-empty']);
-  const filter = (value: string) => wordCaseFilter(value, rules['scope-case']);
   const choices = choicesFactory(rules);
 
   let question: DistinctQuestion;
@@ -68,7 +64,7 @@ export function scopeMaker(questions: DistinctQuestion[], rules: Rules): Distinc
       message,
       when,
       validate: validatorFactory(rules),
-      filter,
+      filter: filterFactory(rules),
       choices,
       type: 'list'
     };
@@ -78,7 +74,7 @@ export function scopeMaker(questions: DistinctQuestion[], rules: Rules): Distinc
       message,
       when,
       validate: validatorFactory(rules),
-      filter,
+      filter: filterFactory(rules),
       type: 'input'
     };
   }
