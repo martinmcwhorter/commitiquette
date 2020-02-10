@@ -1,8 +1,8 @@
-import { DistinctQuestion } from 'inquirer';
 import { Rules } from '@commitlint/load';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
-import { pipeWith } from '../utils';
+import { pipeWith, maxLengthTransformerFactory, valueFromRule } from '../utils';
 import { leadingBlankFilter, maxLineLengthFilter } from '../filters';
+import { Question } from '../commit-template';
 
 export function validatorFactory(rules: Rules) {
   return (value: string) =>
@@ -17,7 +17,7 @@ export function validatorFactory(rules: Rules) {
         value,
         rule: rules['body-min-length'],
         validator: minLengthValidator,
-        message: length => `Subject minimum length of ${length} has not been met`
+        message: length => `Body minimum length of ${length} has not been met`
       }
     ]);
 }
@@ -32,37 +32,30 @@ export function filterFactory(rules: Rules) {
     );
 }
 
-export function transformerFactory() {
+export function transformerFactory(rules: Rules) {
+  const maxLength = valueFromRule(rules['body-max-length']);
+
+  const maxLenTransformer = maxLength ? maxLengthTransformerFactory(maxLength) : (value: string) => value;
+
   return (value: string) => {
-    return value.replace(/\\n/g, '\n');
+    return pipeWith(
+      value,
+      v => v.replace(/\\n/g, '\n'),
+      v => maxLenTransformer(v)
+    );
   };
 }
 
-export function bodyMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
+export function bodyMaker(questions: Question[], rules: Rules): Question[] {
   console.log(rules);
-  const bodyQuestions: DistinctQuestion[] = [
+  const bodyQuestions: Question[] = [
     {
       type: 'input',
       name: 'body',
       message: 'Provide a longer description of the change: (press enter to skip, \\n for newline)\n',
       validate: validatorFactory(rules),
       filter: filterFactory(rules),
-      transformer: transformerFactory()
-    },
-    {
-      type: 'confirm',
-      name: 'isBreaking',
-      message: 'Are there any breaking changes?',
-      default: false
-    },
-    {
-      type: 'input',
-      name: 'body',
-      message:
-        'A BREAKING CHANGE commit requires a body. Please enter a longer description of the commit itself: (press enter to skip, \\n for newline)\n',
-      when: answers => answers.isBreaking && !answers.body.trim(),
-      validate: validatorFactory(rules),
-      transformer: transformerFactory()
+      transformer: transformerFactory(rules)
     }
   ];
 

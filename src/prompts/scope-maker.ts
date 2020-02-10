@@ -3,6 +3,7 @@ import { DistinctQuestion } from 'inquirer';
 import { whenFactory } from '../when';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { wordCaseFilter } from '../filters';
+import { Question } from '../commit-template';
 
 export function validatorFactory(rules: Rules) {
   return (value: string) => {
@@ -51,13 +52,13 @@ export function filterFactory(rules: Rules) {
   return (value: string) => wordCaseFilter(value, rules['scope-case']);
 }
 
-export function scopeMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
+export function scopeMaker(questions: Question[], rules: Rules): Question[] {
   const name = 'scope';
   const message = 'What is the scope of this change:\n';
   const when = whenFactory(rules['scope-enum'], rules['scope-empty']);
   const choices = choicesFactory(rules);
 
-  let question: DistinctQuestion;
+  let question: Question;
   if (choices) {
     question = {
       name,

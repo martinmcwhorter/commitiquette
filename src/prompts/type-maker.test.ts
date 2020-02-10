@@ -24,6 +24,7 @@ describe('type-maker', () => {
       expect(result).toBe(expected);
     });
   });
+
   describe('filterFactory', () => {
     test('should return filter that applies given type-case rule', () => {
       const factory = filterFactory({ 'type-case': [Level.Error, 'always', 'camel-case'] });

@@ -1,5 +1,6 @@
 import { Case, Level, Rule } from '@commitlint/load';
 import { camelCase, capitalCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'change-case';
+import { green, red } from 'chalk';
 
 export const pipeWith = <T>(arg: T, ...fns: ((a: T) => T)[]) => fns.reduce((v, f) => f(v), arg);
 
@@ -56,4 +57,15 @@ export function valueFromRule<T>(rule: Rule<T> | undefined): false | T {
   }
 
   return value;
+}
+
+export function maxLengthTransformerFactory(maxLength: number | undefined) {
+  return (value: string) => {
+    if (maxLength) {
+      const color = value.length <= maxLength ? green : red;
+      return color(`(${value.length}) ${value}`);
+    }
+
+    return value;
+  };
 }

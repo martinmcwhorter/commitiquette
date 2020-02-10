@@ -5,6 +5,7 @@ import { getLongest } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { whenFactory } from '../when';
 import { wordCaseFilter } from '../filters';
+import { Question, PromptAnswers } from '../commit-template';
 
 export function validatorFactory(rules: Rules) {
   return (value: string) => {
@@ -57,8 +58,8 @@ export function choicesFactory(rules: Rules, commitTypes: CommitType) {
   return choices;
 }
 
-export function typeMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
-  const question: ListQuestion = {
+export function typeMaker(questions: Question[], rules: Rules): Question[] {
+  const question: ListQuestion<PromptAnswers> = {
     name: 'type',
     message: "Select the type of change you're committing:\n",
     type: 'list',

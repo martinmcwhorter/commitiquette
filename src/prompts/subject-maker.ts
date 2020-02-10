@@ -1,45 +1,20 @@
 import { Rules } from '@commitlint/load';
-import { Answers, DistinctQuestion } from 'inquirer';
 import { red, green } from 'chalk';
 import { pipeWith, valueFromRule } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { fullStopFilter, wordCaseFilter } from '../filters';
-
-export function header(type: string, scope?: string, subject?: string): string {
-  let header = `${type}`;
-  if (scope) {
-    header += `(${scope})`;
-  }
-  if (subject) {
-    header += subject;
-  }
-  header += ': ';
-
-  return header;
-}
+import { header, PromptAnswers, Question } from '../commit-template';
 
 export function validatorFactory(rules: Rules) {
-  return (
-    value: string,
-    answers: {
-      type: string;
-      scope: string;
-    }
-  ) => {
-    const headerValue = header(answers.type, answers.scope);
+  return (value: string, answers: PromptAnswers) => {
+    const headerValue = header(answers.type, answers.scope, value);
 
     return validate([
       {
         value: headerValue,
         rule: rules['header-max-length'],
         validator: maxLengthValidator,
-        message: length => `Header "${headerValue}" cannot be longer than ${length} chars`
-      },
-      {
-        value,
-        rule: rules['subject-empty'],
-        validator: emptyValidator,
-        message: () => 'Subject of commit must be supplied'
+        message: length => `Header "${headerValue}" cannot be longer than ${length}`
       },
       {
         value,
@@ -63,8 +38,7 @@ export function validatorFactory(rules: Rules) {
         value,
         rule: rules['subject-case'],
         validator: caseValidator,
-        message: (ruleValue, applicable) =>
-          `Subject must ${applicable == 'never' ? 'not' : 'ruleValue'} be in ${ruleValue}`
+        message: (ruleValue, applicable) => `Subject must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`
       }
     ]);
   };
@@ -80,8 +54,8 @@ export function filterFactory(rules: Rules) {
 }
 
 export function messageFactory(rules: Rules) {
-  return (answers: Answers) => {
-    const maxLength = valueFromRule(rules['header-min-length']);
+  return (answers: PromptAnswers) => {
+    const maxLength = valueFromRule(rules['header-max-length']);
 
     if (!maxLength) {
       return `Write a short, imperative tense description of the change:\n`;
@@ -95,7 +69,7 @@ export function messageFactory(rules: Rules) {
 export function transformerFactory(rules: Rules) {
   const filter = filterFactory(rules);
 
-  return (value: string, answers: Answers) => {
+  return (value: string, answers: PromptAnswers) => {
     const headerMaxLength = valueFromRule(rules['header-max-length']);
 
     if (headerMaxLength) {
@@ -103,9 +77,9 @@ export function transformerFactory(rules: Rules) {
       return color(`(${value.length}) ${value}`);
     }
 
-    const subjectMaxLength = valueFromRule(rules['header-max-length']);
+    const subjectMaxLength = valueFromRule(rules['subject-max-length']);
     if (subjectMaxLength) {
-      const color = value.length <= subjectMaxLength ? green : red;
+      const color = filter(value).length <= subjectMaxLength ? green : red;
       return color(`(${value.length}) ${value}`);
     }
 
@@ -113,13 +87,15 @@ export function transformerFactory(rules: Rules) {
   };
 }
 
-export function subjectMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
-  const question: DistinctQuestion = {
+export function subjectMaker(questions: Question[], rules: Rules): Question[] {
+  const filter = filterFactory(rules);
+
+  const question: Question = {
     message: messageFactory(rules),
     name: 'subject',
     type: 'input',
     validate: validatorFactory(rules),
-    filter: filterFactory(rules),
+    filter,
     transformer: transformerFactory(rules)
   };
 

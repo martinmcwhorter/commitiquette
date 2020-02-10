@@ -1,5 +1,5 @@
 import { CommitlintConfig, Rules } from '@commitlint/load';
-import { DistinctQuestion, PromptModule } from 'inquirer';
+import { PromptModule } from 'inquirer';
 import { Commit } from 'commitizen';
 import { pipeWith } from './utils';
 import { typeMaker } from './prompts/type-maker';
@@ -7,9 +7,10 @@ import { footerMaker } from './prompts/footer-maker';
 import { bodyMaker } from './prompts/body-maker';
 import { scopeMaker } from './prompts/scope-maker';
 import { subjectMaker } from './prompts/subject-maker';
+import { Question } from './commit-template';
 
 function buildQuestions(rules: Rules) {
-  const combinedQuestions = pipeWith<DistinctQuestion[]>(
+  const combinedQuestions = pipeWith<Question[]>(
     [],
     x => typeMaker(x, rules),
     x => scopeMaker(x, rules),
