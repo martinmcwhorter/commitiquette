@@ -3,11 +3,11 @@ import { red, green } from 'chalk';
 import { pipeWith, valueFromRule } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { fullStopFilter, wordCaseFilter } from '../filters';
-import { header, PromptAnswers, Question } from '../commit-template';
+import { headerTemplate, PromptAnswers, Question } from '../commit-template';
 
 export function validatorFactory(rules: Rules) {
   return (value: string, answers: PromptAnswers) => {
-    const headerValue = header(answers.type, answers.scope, value);
+    const headerValue = headerTemplate(answers.type, answers.scope, value);
 
     return validate([
       {
@@ -62,7 +62,7 @@ export function messageFactory(rules: Rules) {
     }
 
     return `Write a short, imperative tense description of the change (max ${maxLength -
-      header(answers.type, answers.scope).length} chars):\n`;
+      headerTemplate(answers.type, answers.scope).length} chars):\n`;
   };
 }
 
@@ -73,7 +73,8 @@ export function transformerFactory(rules: Rules) {
     const headerMaxLength = valueFromRule(rules['header-max-length']);
 
     if (headerMaxLength) {
-      const color = filter(value).length <= headerMaxLength - header(answers.type, answers.scope).length ? green : red;
+      const color =
+        filter(value).length <= headerMaxLength - headerTemplate(answers.type, answers.scope).length ? green : red;
       return color(`(${value.length}) ${value}`);
     }
 

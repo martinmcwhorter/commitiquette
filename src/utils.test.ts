@@ -1,5 +1,6 @@
 import { Case, Level } from '@commitlint/load';
-import { getLongest, pipeWith, valueFromRule, wordCase } from './utils';
+import { green, red } from 'chalk';
+import { getLongest, pipeWith, valueFromRule, wordCase, maxLengthTransformerFactory } from './utils';
 
 describe('getLongest', () => {
   test('return longest string length in array', () => {
@@ -68,6 +69,20 @@ describe('wordCase', () => {
       const result = valueFromRule([Level.Error, 'always', 72]);
 
       expect(result).toBe(72);
+    });
+  });
+
+  describe('maxLengthTransformerFactory', () => {
+    test.each<[number | undefined, string, string]>([
+      [3, 'foo', green('(3) foo')],
+      [3, 'foo bar', red('(7) foo bar')],
+      [undefined, 'foo', 'foo']
+    ])('should transform when length: %n to expected: %s', (length, value, expected) => {
+      const factory = maxLengthTransformerFactory(length);
+
+      const result = factory(value);
+
+      expect(result).toBe(expected);
     });
   });
 });

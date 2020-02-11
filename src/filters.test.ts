@@ -32,6 +32,12 @@ describe('filters', () => {
 
       expect(result).toBe('foo');
     });
+
+    test('does not add blank line to empty string', () => {
+      const result = leadingBlankFilter('', [2, 'always', undefined]);
+
+      expect(result).toBe('');
+    });
   });
 
   describe('fullStopFilter', () => {
@@ -89,6 +95,12 @@ describe('filters', () => {
       const result = wordCaseFilter('FOO_bar', undefined);
 
       expect(result).toBe('FOO_bar');
+    });
+
+    test('should not change when rule is array of cases', () => {
+      const result = wordCaseFilter('foo', [Level.Error, 'always', ['upper-case', 'lower-case']]);
+
+      expect(result).toBe('foo');
     });
   });
 
