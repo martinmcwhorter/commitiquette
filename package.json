@@ -1,8 +1,8 @@
 {
   "name": "commitiquette",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Plugin for commitizen to use commitLint config",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "tsc -p tsconfig.build.json",
@@ -13,6 +13,7 @@
     "commitlint"
   ],
   "author": "Martin McWhorter <martin@mcwhorter.org>",
+  "repository": "github:martinmcwhorter/commitiquette",
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^8.3.4",
