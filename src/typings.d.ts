@@ -31,6 +31,7 @@ declare module '@commitlint/load' {
     'footer-leading-blank'?: Rule<undefined>;
     'footer-max-length'?: Rule<number>;
     'footer-min-length'?: Rule<number>;
+    'footer-max-line-length'?: Rule<number>;
     'header-case'?: Rule<Case>;
     'header-full-stop'?: Rule<string>;
     'header-max-length'?: Rule<number>;

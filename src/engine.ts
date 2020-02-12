@@ -7,7 +7,7 @@ import { footerMaker } from './prompts/footer-maker';
 import { bodyMaker } from './prompts/body-maker';
 import { scopeMaker } from './prompts/scope-maker';
 import { subjectMaker } from './prompts/subject-maker';
-import { Question } from './commit-template';
+import { Question, commitTemplate } from './commit-template';
 
 function buildQuestions(rules: Rules) {
   const combinedQuestions = pipeWith<Question[]>(
@@ -24,7 +24,10 @@ function buildQuestions(rules: Rules) {
 
 export async function engine(config: CommitlintConfig, prompt: PromptModule, commit: Commit) {
   const questions = buildQuestions(config.rules);
+
   const answers = await prompt(questions);
 
-  console.log(JSON.stringify(answers));
+  const message = commitTemplate(answers);
+
+  return commit(message);
 }

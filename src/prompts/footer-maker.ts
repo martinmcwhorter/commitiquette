@@ -1,41 +1,83 @@
 import { Rules } from '@commitlint/load';
-import { DistinctQuestion, Answers } from 'inquirer';
-import { valueFromRule } from '../utils';
-import { PromptAnswers } from '../commit-template';
+import { valueFromRule, maxLengthTransformerFactory, pipeWith } from '../utils';
+import { Answers, Question } from '../commit-template';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
+import { leadingBlankFilter, maxLineLengthFilter } from '../filters';
 
 export function validatorFactory(rules: Rules) {
-  return (value: string) =>
-    validate([
+  return (value: string, answers: Answers) => {
+    const breaking = answers.breaking ?? '';
+
+    return validate([
       {
-        value,
+        value: value + breaking,
         rule: rules['footer-max-length'],
         validator: maxLengthValidator,
-        message: length => `Body maximum length of ${length} has been exceeded`
+        message: length => 'Footer maximum length of ${length} has been exceeded'
       },
       {
-        value,
+        value: value + breaking,
         rule: rules['footer-min-length'],
         validator: minLengthValidator,
-        message: length => `Subject minimum length of ${length} has not been met`
+        message: length => `Footer minimum length of ${length} has not been met`
       }
     ]);
+  };
 }
 
-function breakingChangeMessageFactory(rules: Rules) {
-  return (answers: Answers) => {
+export function filterFactory(rules: Rules) {
+  return (value: string): string =>
+    pipeWith<string>(
+      value,
+      v => leadingBlankFilter(v, rules['footer-leading-blank']),
+      v => maxLineLengthFilter(v, rules['footer-max-line-length'])
+    );
+}
+
+export function breakingChangeMessageFactory(rules: Rules) {
+  return () => {
     const maxLength = valueFromRule(rules['footer-max-length']);
 
     if (!maxLength) {
-      return `Describe the breaking changes:\n:\n`;
+      return `Describe the breaking changes:\n`;
     }
 
     return `Describe the breaking changes:\n (max ${maxLength} chars):\n`;
   };
 }
 
-export function footerMaker(questions: DistinctQuestion[], rules: Rules): DistinctQuestion[] {
-  const breakingQuestions: DistinctQuestion<PromptAnswers>[] = [
+export function issuesMessageFactory(rules: Rules) {
+  return () => {
+    const maxLength = valueFromRule(rules['footer-max-length']);
+
+    if (!maxLength) {
+      return `List issues fixed:\n`;
+    }
+
+    return `List issues fixed:\n (max ${maxLength} chars):\n`;
+  };
+}
+
+function isFixCommit(answers: Answers) {
+  return answers?.type == 'fix' ?? false;
+}
+
+export function issuesTransformerFactory(rules: Rules) {
+  return (value: string, answers: Answers) => {
+    const breaking = answers.breaking ?? '';
+
+    const footerMaxLength = valueFromRule(rules['footer-max-length']);
+
+    if (footerMaxLength) {
+      return maxLengthTransformerFactory(footerMaxLength - breaking.length)(value);
+    }
+
+    return value;
+  };
+}
+
+export function footerMaker(questions: Question[], rules: Rules): Question[] {
+  const breakingQuestions: Question[] = [
     {
       type: 'confirm',
       name: 'isBreaking',
@@ -44,10 +86,28 @@ export function footerMaker(questions: DistinctQuestion[], rules: Rules): Distin
     },
     {
       type: 'input',
-      name: 'beaking',
+      name: 'breaking',
       message: breakingChangeMessageFactory(rules),
       when: answers => !!answers.isBreaking,
-      validate: validatorFactory(rules)
+      validate: validatorFactory(rules),
+      transformer: maxLengthTransformerFactory(valueFromRule(rules['footer-max-length'])),
+      filter: filterFactory(rules)
+    },
+    {
+      type: 'confirm',
+      name: 'isIssue',
+      message: 'Does this fix any issues?',
+      when: answers => !isFixCommit(answers),
+      default: false
+    },
+    {
+      type: 'input',
+      name: 'issue',
+      message: issuesMessageFactory(rules),
+      when: answers => isFixCommit(answers) || !!answers.isIssue,
+      validate: validatorFactory(rules),
+      transformer: issuesTransformerFactory(rules),
+      filter: filterFactory(rules)
     }
   ];
 

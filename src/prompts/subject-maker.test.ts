@@ -1,12 +1,12 @@
 import { Rules, Level } from '@commitlint/load';
 
 import { green, red } from 'chalk';
-import { PromptAnswers } from '../commit-template';
+import { Answers } from '../commit-template';
 import { validatorFactory, filterFactory, messageFactory, transformerFactory, subjectMaker } from './subject-maker';
 
 describe('subject-maker', () => {
   describe('validatorFactory', () => {
-    test.each<[Rules, string, PromptAnswers, string | true]>([
+    test.each<[Rules, string, Answers, string | true]>([
       [
         { 'header-max-length': [Level.Error, 'always', 3] },
         'too long',
@@ -52,7 +52,7 @@ describe('subject-maker', () => {
   });
 
   describe('messageFactory', () => {
-    test.each<[Rules, PromptAnswers, string]>([
+    test.each<[Rules, Answers, string]>([
       [
         { 'header-max-length': [Level.Error, 'always', 72] },
         { type: 'feat', scope: 'foo' },
@@ -69,7 +69,7 @@ describe('subject-maker', () => {
   });
 
   describe('transformerFactory', () => {
-    test.each<[Rules, string, PromptAnswers, string]>([
+    test.each<[Rules, string, Answers, string]>([
       [{ 'header-max-length': [Level.Error, 'always', 14] }, 'foo', { type: 'feat', scope: 'bar' }, green('(3) foo')],
       [{ 'header-max-length': [Level.Error, 'always', 13] }, 'foo', { type: 'feat', scope: 'bar' }, red('(3) foo')],
       [{ 'subject-max-length': [Level.Error, 'always', 3] }, 'foo', {}, green('(3) foo')],

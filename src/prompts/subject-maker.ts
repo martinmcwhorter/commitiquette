@@ -3,10 +3,10 @@ import { red, green } from 'chalk';
 import { pipeWith, valueFromRule } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { fullStopFilter, wordCaseFilter } from '../filters';
-import { headerTemplate, PromptAnswers, Question } from '../commit-template';
+import { headerTemplate, Answers, Question } from '../commit-template';
 
 export function validatorFactory(rules: Rules) {
-  return (value: string, answers: PromptAnswers) => {
+  return (value: string, answers: Answers) => {
     const headerValue = headerTemplate(answers.type, answers.scope, value);
 
     return validate([
@@ -54,7 +54,7 @@ export function filterFactory(rules: Rules) {
 }
 
 export function messageFactory(rules: Rules) {
-  return (answers: PromptAnswers) => {
+  return (answers: Answers) => {
     const maxLength = valueFromRule(rules['header-max-length']);
 
     if (!maxLength) {
@@ -69,7 +69,7 @@ export function messageFactory(rules: Rules) {
 export function transformerFactory(rules: Rules) {
   const filter = filterFactory(rules);
 
-  return (value: string, answers: PromptAnswers) => {
+  return (value: string, answers: Answers) => {
     const headerMaxLength = valueFromRule(rules['header-max-length']);
 
     if (headerMaxLength) {

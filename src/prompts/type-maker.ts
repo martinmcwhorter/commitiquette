@@ -1,11 +1,11 @@
 import { Rules } from '@commitlint/load';
-import { ChoiceOptions, DistinctQuestion, ListQuestion } from 'inquirer';
+import { ChoiceOptions, ListQuestion } from 'inquirer';
 import { types, CommitType } from 'conventional-commit-types';
 import { getLongest } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { whenFactory } from '../when';
 import { wordCaseFilter } from '../filters';
-import { Question, PromptAnswers } from '../commit-template';
+import { Question, Answers } from '../commit-template';
 
 export function validatorFactory(rules: Rules) {
   return (value: string) => {
@@ -59,7 +59,7 @@ export function choicesFactory(rules: Rules, commitTypes: CommitType) {
 }
 
 export function typeMaker(questions: Question[], rules: Rules): Question[] {
-  const question: ListQuestion<PromptAnswers> = {
+  const question: ListQuestion<Answers> = {
     name: 'type',
     message: "Select the type of change you're committing:\n",
     type: 'list',
