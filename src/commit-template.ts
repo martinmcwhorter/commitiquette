@@ -1,16 +1,17 @@
-import { Answers, DistinctQuestion } from 'inquirer';
+import { DistinctQuestion } from 'inquirer';
 
-export type PromptAnswers = {
+export type Answers = {
   type?: string;
   scope?: string;
   subject?: string;
   body?: string;
   isBreaking?: boolean;
+  breaking?: string;
   isIssue?: boolean;
-  footer?: string;
+  issue?: string;
 };
 
-export type Question = DistinctQuestion<PromptAnswers>;
+export type Question = DistinctQuestion<Answers>;
 
 export function headerTemplate(type?: string, scope?: string, subject?: string): string {
   let header = `${type}`;
@@ -27,12 +28,22 @@ export function headerTemplate(type?: string, scope?: string, subject?: string):
   return header;
 }
 
-export function commitTemplate(answers: PromptAnswers) {
+function renderSection(value: string | undefined): string {
+  return value ? `\n${value}` : '';
+}
+
+export function commitTemplate(answers: Answers) {
   let template = headerTemplate(answers.type, answers.scope, answers.subject);
 
-  template += answers.body ?? '';
+  template += renderSection(answers.body);
 
-  template += answers.footer ?? '';
+  template += renderSection(answers.breaking);
+
+  if (answers.breaking) {
+    template += answers.issue ?? '';
+  } else {
+    template += renderSection(answers.issue);
+  }
 
   return template;
 }
