@@ -41,19 +41,19 @@ export function wordCase(value: string, rule: Case): string {
   }
 }
 
-export function valueFromRule<T>(rule: Rule<T> | undefined): false | T {
+export function valueFromRule<T>(rule: Rule<T> | undefined): undefined | T {
   if (rule == null) {
-    return false;
+    return undefined;
   }
 
   const [level, applicable, value] = rule;
 
   if (level == Level.Disable) {
-    return false;
+    return undefined;
   }
 
   if (applicable == 'never') {
-    return false;
+    return undefined;
   }
 
   return value;
