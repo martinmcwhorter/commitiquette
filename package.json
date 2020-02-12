@@ -44,9 +44,12 @@
     "chalk": "^3.0.0",
     "change-case": "^4.1.1",
     "conventional-commit-types": "^3.0.0",
-    "right-pad": "^1.0.1",
     "tslib": "^1.10.0",
     "word-wrap": "^1.2.3"
+  },
+  "peerDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "commitizen": "4.0.3"
   },
   "husky": {
     "hooks": {
