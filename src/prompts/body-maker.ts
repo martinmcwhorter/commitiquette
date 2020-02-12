@@ -47,7 +47,6 @@ export function transformerFactory(rules: Rules) {
 }
 
 export function bodyMaker(questions: Question[], rules: Rules): Question[] {
-  console.log(rules);
   const bodyQuestions: Question[] = [
     {
       type: 'input',
