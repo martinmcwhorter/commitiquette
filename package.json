@@ -1,6 +1,6 @@
 {
   "name": "commitiquette",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Plugin for commitizen to use commitLint config",
   "main": "dist/index.js",
   "scripts": {
@@ -10,7 +10,9 @@
   },
   "keywords": [
     "commitizen",
-    "commitlint"
+    "commitlint",
+    "commitizen-plugin",
+    "commitlint-plugin"
   ],
   "author": "Martin McWhorter <martin@mcwhorter.org>",
   "repository": "github:martinmcwhorter/commitiquette",
