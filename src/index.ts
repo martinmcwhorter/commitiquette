@@ -1,5 +1,5 @@
 import commitlintLoad from '@commitlint/load';
-import { PromptModule, prompt } from 'inquirer';
+import { PromptModule } from 'inquirer';
 import { Commit } from 'commitizen';
 import { engine } from './engine';
 
@@ -11,6 +11,7 @@ export async function prompter(cz: { prompt: PromptModule }, commit: Commit) {
 /**
  * Hacking
  *
- * Uncomment the following line for simplified local development without commitizen.
+ * Uncomment the following lines for simplified local development without commitizen.
  */
+// import { prompt } from 'inquirer';
 // prompter({ prompt }, value => console.log(value));
