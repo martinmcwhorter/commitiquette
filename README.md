@@ -1,4 +1,4 @@
-# commitiquette
+# Commitiquette
 
 Plugin for Commitizen that uses commitLint configuration. Allows you to use both Commitizen and commitLint with a single configuration.
 
@@ -6,6 +6,11 @@ Plugin for Commitizen that uses commitLint configuration. Allows you to use both
 [![codecov](https://codecov.io/gh/martinmcwhorter/commitiquette/branch/master/graph/badge.svg)](https://codecov.io/gh/martinmcwhorter/commitiquette)
 
 ## Installation
+
+You will first need to follow the commitizen and commitlint instalation instructions if you do not already have these installed.
+
+- [commitizen](http://commitizen.github.io/cz-cli/)
+- [commitlint](https://commitlint.js.org/#/guides-local-setup)
 
 Use npm or yarn to install commitiquette into your project.
 
