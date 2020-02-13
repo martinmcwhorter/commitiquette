@@ -4,6 +4,7 @@ Plugin for Commitizen that uses commitLint configuration. Allows you to use both
 
 ![Node.js CI](https://github.com/martinmcwhorter/commitiquette/workflows/Node.js%20CI/badge.svg)
 [![codecov](https://codecov.io/gh/martinmcwhorter/commitiquette/branch/master/graph/badge.svg)](https://codecov.io/gh/martinmcwhorter/commitiquette)
+[![npm version](https://badge.fury.io/js/commitiquette.svg)](https://badge.fury.io/js/commitiquette)
 
 ## Installation
 
