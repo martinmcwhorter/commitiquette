@@ -4,6 +4,8 @@ import { Answers, Question } from '../commit-template';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
 import { leadingBlankFilter, maxLineLengthFilter } from '../filters';
 
+const BREAKING_CHANGE = 'BREAKING CHANGE: ';
+
 export function validatorFactory(rules: Rules) {
   return (value: string, answers: Answers) => {
     const breaking = answers.breaking ?? '';
@@ -25,10 +27,11 @@ export function validatorFactory(rules: Rules) {
   };
 }
 
-export function filterFactory(rules: Rules) {
+export function filterFactory(rules: Rules, prefix = '') {
   return (value: string): string =>
     pipeWith<string>(
       value,
+      v => prefix + v,
       v => leadingBlankFilter(v, rules['footer-leading-blank']),
       v => maxLineLengthFilter(v, rules['footer-max-line-length'])
     );
@@ -51,7 +54,7 @@ export function issuesMessageFactory(rules: Rules) {
     const maxLength = valueFromRule(rules['footer-max-length']);
 
     if (!maxLength) {
-      return `List issues fixed:\n`;
+      return `Add issue references (e.g. "fix #123", "re #123".):\n`;
     }
 
     return `List issues fixed:\n (max ${maxLength} chars):\n`;
@@ -60,6 +63,18 @@ export function issuesMessageFactory(rules: Rules) {
 
 function isFixCommit(answers: Answers) {
   return answers?.type == 'fix' ?? false;
+}
+
+export function breakingTransformFactory(rules: Rules, prefix: string) {
+  return (value: string) => {
+    const footerMaxLength = valueFromRule(rules['footer-max-length']);
+
+    if (footerMaxLength) {
+      return maxLengthTransformerFactory(footerMaxLength - prefix.length)(value);
+    }
+
+    return value;
+  };
 }
 
 export function issuesTransformerFactory(rules: Rules) {
@@ -90,13 +105,13 @@ export function footerMaker(questions: Question[], rules: Rules): Question[] {
       message: breakingChangeMessageFactory(rules),
       when: answers => !!answers.isBreaking,
       validate: validatorFactory(rules),
-      transformer: maxLengthTransformerFactory(valueFromRule(rules['footer-max-length'])),
-      filter: filterFactory(rules)
+      transformer: breakingTransformFactory(rules, BREAKING_CHANGE),
+      filter: filterFactory(rules, BREAKING_CHANGE)
     },
     {
       type: 'confirm',
       name: 'isIssue',
-      message: 'Does this fix any issues?',
+      message: 'Does this fix Does this change affect any open issues?',
       when: answers => !isFixCommit(answers),
       default: false
     },
