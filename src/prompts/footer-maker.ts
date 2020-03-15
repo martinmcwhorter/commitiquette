@@ -15,7 +15,7 @@ export function validatorFactory(rules: Rules) {
         value: value + breaking,
         rule: rules['footer-max-length'],
         validator: maxLengthValidator,
-        message: length => 'Footer maximum length of ${length} has been exceeded'
+        message: length => `Footer maximum length of ${length} has been exceeded`
       },
       {
         value: value + breaking,
@@ -40,24 +40,26 @@ export function filterFactory(rules: Rules, prefix = '') {
 export function breakingChangeMessageFactory(rules: Rules) {
   return () => {
     const maxLength = valueFromRule(rules['footer-max-length']);
+    const MESSAGE = 'Describe the breaking changes';
 
     if (!maxLength) {
-      return `Describe the breaking changes:\n`;
+      return `${MESSAGE}:\n`;
     }
 
-    return `Describe the breaking changes:\n (max ${maxLength} chars):\n`;
+    return `${MESSAGE} (max ${maxLength} chars):\n`;
   };
 }
 
 export function issuesMessageFactory(rules: Rules) {
   return () => {
     const maxLength = valueFromRule(rules['footer-max-length']);
+    const MESSAGE = 'Add issue references (e.g. "fix #123", "re #123".)';
 
     if (!maxLength) {
-      return `Add issue references (e.g. "fix #123", "re #123".):\n`;
+      return `${MESSAGE}:\n`;
     }
 
-    return `List issues fixed:\n (max ${maxLength} chars):\n`;
+    return `${MESSAGE} (max ${maxLength} chars):\n`;
   };
 }
 
@@ -92,7 +94,7 @@ export function issuesTransformerFactory(rules: Rules) {
 }
 
 export function footerMaker(questions: Question[], rules: Rules): Question[] {
-  const breakingQuestions: Question[] = [
+  const footerQuestions: Question[] = [
     {
       type: 'confirm',
       name: 'isBreaking',
@@ -126,5 +128,5 @@ export function footerMaker(questions: Question[], rules: Rules): Question[] {
     }
   ];
 
-  return [...questions, ...breakingQuestions];
+  return [...questions, ...footerQuestions];
 }
