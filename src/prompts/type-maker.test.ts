@@ -1,4 +1,6 @@
 import { Level, Rules } from '@commitlint/load';
+import { types } from 'conventional-commit-types';
+
 import { filterFactory, choicesFactory, validatorFactory, typeMaker } from './type-maker';
 
 jest.mock('conventional-commit-types');
@@ -36,10 +38,69 @@ describe('type-maker', () => {
   });
 
   describe('choicesFactory', () => {
-    describe('should return undefined if type-enum undefined', () => {
-      const result = choicesFactory({}, {});
+    describe('should return commitTypes as choices if type-enum undefined', () => {
+      const result = choicesFactory({}, types);
 
-      expect(result).toBeUndefined();
+      expect(result).toEqual([
+        {
+          name: 'feat: A new feature',
+          short: 'feat',
+          value: 'feat'
+        },
+        {
+          name: 'fix: A bug fix',
+          short: 'fix',
+          value: 'fix'
+        },
+        {
+          name: 'docs: Documentation only changes',
+          short: 'docs',
+          value: 'docs'
+        },
+        {
+          name:
+            'style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)',
+          short: 'style',
+          value: 'style'
+        },
+        {
+          name: 'refactor: A code change that neither fixes a bug nor adds a feature',
+          short: 'refactor',
+          value: 'refactor'
+        },
+        {
+          name: 'perf: A code change that improves performance',
+          short: 'perf',
+          value: 'perf'
+        },
+        {
+          name: 'test: Adding missing tests or correcting existing tests',
+          short: 'test',
+          value: 'test'
+        },
+        {
+          name:
+            'build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)',
+          short: 'build',
+          value: 'build'
+        },
+        {
+          name:
+            'ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)',
+          short: 'ci',
+          value: 'ci'
+        },
+        {
+          name: "chore: Other changes that don't modify src or test files",
+          short: 'chore',
+          value: 'chore'
+        },
+        {
+          name: 'revert: Reverts a previous commit',
+          short: 'revert',
+          value: 'revert'
+        }
+      ]);
     });
 
     describe('should return choices if type-enum exits', () => {
@@ -47,17 +108,17 @@ describe('type-maker', () => {
 
       expect(result).toEqual([
         {
-          name: 'foo ',
+          name: 'foo: ',
           short: 'foo',
           value: 'foo'
         },
         {
-          name: 'bar ',
+          name: 'bar: ',
           short: 'bar',
           value: 'bar'
         },
         {
-          name: 'baz ',
+          name: 'baz: ',
           short: 'baz',
           value: 'baz'
         }
@@ -75,17 +136,17 @@ describe('type-maker', () => {
 
         expect(result).toEqual([
           {
-            name: 'foo Fooey',
+            name: 'foo: Fooey',
             short: 'foo',
             value: 'foo'
           },
           {
-            name: 'bar Barey',
+            name: 'bar: Barey',
             short: 'bar',
             value: 'bar'
           },
           {
-            name: 'baz Bazey',
+            name: 'baz: Bazey',
             short: 'baz',
             value: 'baz'
           }
@@ -105,22 +166,22 @@ describe('type-maker', () => {
 
         expect(result).toEqual([
           {
-            name: 'foo       Fooey',
+            name: 'foo      : Fooey',
             short: 'foo',
             value: 'foo'
           },
           {
-            name: 'bar       Barey',
+            name: 'bar      : Barey',
             short: 'bar',
             value: 'bar'
           },
           {
-            name: 'baz       Bazey',
+            name: 'baz      : Bazey',
             short: 'baz',
             value: 'baz'
           },
           {
-            name: 'very-long Longey',
+            name: 'very-long: Longey',
             short: 'very-long',
             value: 'very-long'
           }

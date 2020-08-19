@@ -49,13 +49,20 @@ export function choicesFactory(rules: Rules, commitTypes: CommitType) {
   if (typeEnum && typeEnum.length > 0) {
     const longest = getLongest(typeEnum);
     choices = typeEnum.map(value => ({
-      name: `${value.padEnd(longest)} ${commitTypes[value]?.description ?? ''}`,
+      name: `${value.padEnd(longest)}: ${commitTypes[value]?.description ?? ''}`,
       value: value,
       short: value
     }));
   }
 
-  return choices;
+  return (
+    choices ||
+    Object.keys(commitTypes).map(commitType => ({
+      name: `${commitType}: ${commitTypes[commitType].description ?? ''}`,
+      value: commitType,
+      short: commitType
+    }))
+  );
 }
 
 export function typeMaker(questions: Question[], rules: Rules): Question[] {
