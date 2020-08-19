@@ -58,7 +58,20 @@ describe('scopeMaker', () => {
       const scopeConfig = scopeMaker([], { 'scope-enum': [2, 'always', ['foo', 'bar']] })[0] as ListQuestion;
 
       if (scopeConfig.choices) {
-        expect(scopeConfig.choices).toEqual(['foo', 'bar']);
+        expect(scopeConfig.choices).toEqual([
+          {
+            name: 'foo',
+            value: 'foo'
+          },
+          {
+            name: 'bar',
+            value: 'bar'
+          },
+          {
+            name: ':skip',
+            value: ''
+          }
+        ]);
       }
     });
   });
