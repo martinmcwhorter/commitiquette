@@ -1,5 +1,5 @@
 import { Rules } from '@commitlint/load';
-import { DistinctQuestion } from 'inquirer';
+import { ChoiceOptions } from 'inquirer';
 import { whenFactory } from '../when';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { wordCaseFilter } from '../filters';
@@ -37,11 +37,11 @@ export function validatorFactory(rules: Rules) {
 }
 
 export function choicesFactory(rules: Rules) {
-  let choices: string[] | undefined;
+  let choices: ChoiceOptions[] | undefined;
   if (rules['scope-enum']) {
     const [, , scopeEnum] = rules['scope-enum'];
     if (scopeEnum && scopeEnum.length > 0) {
-      choices = scopeEnum;
+      choices = [...scopeEnum.map(scope => ({ name: scope, value: scope })), { name: ':skip', value: '' }];
     }
   }
 
