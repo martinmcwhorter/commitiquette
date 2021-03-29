@@ -29,6 +29,18 @@ describe('body-maker', () => {
 
       expect(result).toBe(expected);
     });
+
+    it('should prepend body with and leading empty line', () => {
+      const rules: Rules = {
+        'body-leading-blank': [Level.Error, 'always', undefined],
+        'body-max-line-length': [Level.Error, 'never', Infinity]
+      };
+      const userTypedBody = 'my message should be prepended with an empty new line';
+
+      const result = filterFactory(rules)(userTypedBody);
+
+      expect(result).toBe('\nmy message should be prepended with an empty new line');
+    });
   });
 
   describe('transformerFactory', () => {

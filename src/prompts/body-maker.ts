@@ -26,8 +26,8 @@ export function filterFactory(rules: Rules) {
   return (value: string) =>
     pipeWith<string>(
       value,
-      v => leadingBlankFilter(v, rules['body-leading-blank']),
       v => maxLineLengthFilter(v, rules['body-max-line-length']),
+      v => leadingBlankFilter(v, rules['body-leading-blank']),
       v => v.replace(/\\n/g, '\n')
     );
 }
