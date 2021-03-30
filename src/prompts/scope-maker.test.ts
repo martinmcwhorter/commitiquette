@@ -1,6 +1,6 @@
 import { ListQuestion } from 'inquirer';
 import { Rule, Case, Level, Rules } from '@commitlint/load';
-import { scopeMaker, filterFactory, validatorFactory } from './scope-maker';
+import { scopeMaker, filterFactory, validatorFactory, choicesFactory } from './scope-maker';
 
 describe('scopeMaker', () => {
   describe('validatorFactory', () => {
@@ -54,7 +54,7 @@ describe('scopeMaker', () => {
   });
 
   describe('choices', () => {
-    test('should display choices if array scope enum is present', () => {
+    it('should display choices if array scope enum is present', () => {
       const scopeConfig = scopeMaker([], { 'scope-enum': [2, 'always', ['foo', 'bar']] })[0] as ListQuestion;
 
       if (scopeConfig.choices) {
@@ -74,6 +74,38 @@ describe('scopeMaker', () => {
         ]);
       }
     });
+  });
+
+  describe('choicesFactory', () => {
+    it('should not allow non-empty scope when empty scope is required', () => {
+      const scopeConfig = choicesFactory({
+        'scope-empty': [2, 'always', undefined]
+      });
+
+      expect(scopeConfig).toEqual([{ name: ':skip', value: '' }]);
+    });
+
+    it('should not allow skipping scope when is required', () => {
+      const scopeConfig = choicesFactory({
+        'scope-empty': [2, 'never', undefined]
+      });
+
+      expect(scopeConfig).not.toContainEqual({ name: ':skip', value: '' });
+    });
+  });
+
+  it('should allow skipping scope when "scope-empty" severity is "warn"', () => {
+    const scopeConfig = choicesFactory({
+      'scope-empty': [1, 'always', undefined]
+    });
+
+    expect(scopeConfig).toContainEqual({ name: ':skip', value: '' });
+  });
+
+  it('should allow skipping scope when "scope-empty" rule is not set', () => {
+    const scopeConfig = choicesFactory({});
+
+    expect(scopeConfig).toContainEqual({ name: ':skip', value: '' });
   });
 
   describe('filterFactory', () => {

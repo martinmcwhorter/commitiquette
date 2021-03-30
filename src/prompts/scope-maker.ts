@@ -1,4 +1,4 @@
-import { Rules } from '@commitlint/load';
+import { Rules, Level } from '@commitlint/load';
 import { ChoiceOptions } from 'inquirer';
 import { whenFactory } from '../when';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
@@ -36,13 +36,39 @@ export function validatorFactory(rules: Rules) {
   };
 }
 
-export function choicesFactory(rules: Rules) {
-  let choices: ChoiceOptions[] | undefined;
-  if (rules['scope-enum']) {
-    const [, , scopeEnum] = rules['scope-enum'];
-    if (scopeEnum && scopeEnum.length > 0) {
-      choices = [...scopeEnum.map(scope => ({ name: scope, value: scope })), { name: ':skip', value: '' }];
+function parseEmptyScopeRule(rule: Rules['scope-empty']): [boolean, ChoiceOptions | undefined] {
+  const skipChoice: ChoiceOptions = { name: ':skip', value: '' };
+  if (rule !== undefined) {
+    const [level, applicability] = rule;
+    if (level === Level.Error) {
+      if (applicability === 'always') {
+        return [true, skipChoice];
+      }
+      return [false, undefined];
     }
+  }
+  return [true, skipChoice];
+}
+
+function parseScopeEnumRule(rule: Rules['scope-enum']): [boolean, ChoiceOptions[] | undefined] {
+  if (rule !== undefined) {
+    const [, , scopeEnum] = rule;
+    return [true, scopeEnum.map(scope => ({ name: scope, value: scope }))];
+  }
+  return [false, undefined];
+}
+
+export function choicesFactory(rules: Rules): ChoiceOptions[] | undefined {
+  const choices: ChoiceOptions[] = [];
+
+  const [containsSkipChoice, skipChoice] = parseEmptyScopeRule(rules['scope-empty']);
+  if (containsSkipChoice) {
+    choices.push(skipChoice as ChoiceOptions);
+  }
+
+  const [containsScopeEnumChoices, scopeEnumChoices] = parseScopeEnumRule(rules['scope-enum']);
+  if (containsScopeEnumChoices) {
+    choices.unshift(...(scopeEnumChoices as ChoiceOptions[]));
   }
 
   return choices;
