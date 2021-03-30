@@ -94,6 +94,20 @@ describe('scopeMaker', () => {
     });
   });
 
+  it('should allow skipping scope when "scope-empty" severity is "warn"', () => {
+    const scopeConfig = choicesFactory({
+      'scope-empty': [1, 'always', undefined]
+    });
+
+    expect(scopeConfig).toContainEqual({ name: ':skip', value: '' });
+  });
+
+  it('should allow skipping scope when "scope-empty" rule is not set', () => {
+    const scopeConfig = choicesFactory({});
+
+    expect(scopeConfig).toContainEqual({ name: ':skip', value: '' });
+  });
+
   describe('filterFactory', () => {
     test.each<[Rule<Case>, string, string]>([
       [[Level.Error, 'always', 'camel-case'], 'FOO_BAR', 'fooBar'],
