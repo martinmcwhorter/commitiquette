@@ -44,8 +44,8 @@ function parseEmptyScopeRule(rule: Rules['scope-empty']): [boolean, ChoiceOption
       if (applicability === 'always') {
         return [true, skipChoice];
       }
+      return [false, undefined];
     }
-    return [false, undefined];
   }
   return [true, skipChoice];
 }
