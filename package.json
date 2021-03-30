@@ -18,8 +18,8 @@
   "repository": "github:martinmcwhorter/commitiquette",
   "license": "MIT",
   "devDependencies": {
-    "@commitlint/cli": "^9.1.1",
-    "@commitlint/config-conventional": "^8.3.4",
+    "@commitlint/cli": "^12.1.0",
+    "@commitlint/config-conventional": "^12.1.0",
     "@commitlint/load": "^8.3.4",
     "@types/commitlint__load": "^8.3.0",
     "@types/inquirer": "^6.5.0",
