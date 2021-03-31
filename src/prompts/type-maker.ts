@@ -1,5 +1,5 @@
-import { Rules } from '@commitlint/load';
-import { ChoiceOptions, ListQuestion } from 'inquirer';
+import type { QualifiedRules } from '@commitlint/types';
+import type { Answers as InquirerAnswers, ChoiceOptions, ListQuestion } from 'inquirer';
 import { types, CommitType } from 'conventional-commit-types';
 import { getLongest } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
@@ -7,7 +7,7 @@ import { whenFactory } from '../when';
 import { wordCaseFilter } from '../filters';
 import { Question, Answers } from '../commit-template';
 
-export function validatorFactory(rules: Rules) {
+export function validatorFactory(rules: QualifiedRules): (value: string) => string | true {
   return (value: string) => {
     return validate([
       {
@@ -38,11 +38,20 @@ export function validatorFactory(rules: Rules) {
   };
 }
 
-export function filterFactory(rules: Rules) {
+export function filterFactory(rules: QualifiedRules): (value: string) => string {
   return (value: string) => wordCaseFilter(value, rules['type-case']);
 }
 
-export function choicesFactory(rules: Rules, commitTypes: CommitType) {
+export function choicesFactory(
+  rules: QualifiedRules,
+  commitTypes: CommitType
+):
+  | ChoiceOptions<InquirerAnswers>[]
+  | {
+      name: string;
+      value: string;
+      short: string;
+    }[] {
   const [, , typeEnum] = rules['type-enum'] ?? [, , null];
 
   let choices: ChoiceOptions[] | undefined;
@@ -65,7 +74,7 @@ export function choicesFactory(rules: Rules, commitTypes: CommitType) {
   );
 }
 
-export function typeMaker(questions: Question[], rules: Rules): Question[] {
+export function typeMaker(questions: Question[], rules: QualifiedRules): Question[] {
   const question: ListQuestion<Answers> = {
     name: 'type',
     message: "Select the type of change you're committing:\n",
