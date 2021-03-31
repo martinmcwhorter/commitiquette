@@ -7,7 +7,8 @@ import { footerMaker } from './prompts/footer-maker';
 import { bodyMaker } from './prompts/body-maker';
 import { scopeMaker } from './prompts/scope-maker';
 import { subjectMaker } from './prompts/subject-maker';
-import { Question, commitTemplate } from './commit-template';
+import type { Question } from './commit-template';
+import { commitTemplate } from './commit-template';
 
 function buildQuestions(rules: QualifiedRules) {
   const combinedQuestions = pipeWith<Question[]>(
