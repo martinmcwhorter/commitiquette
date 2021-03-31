@@ -1,6 +1,6 @@
-import { CommitlintConfig, Rules } from '@commitlint/load';
-import { PromptModule } from 'inquirer';
-import { Commit } from 'commitizen';
+import type { QualifiedConfig } from '@commitlint/types';
+import type { PromptModule } from 'inquirer';
+import type { Commit } from 'commitizen';
 import { pipeWith } from './utils';
 import { typeMaker } from './prompts/type-maker';
 import { footerMaker } from './prompts/footer-maker';
@@ -9,7 +9,7 @@ import { scopeMaker } from './prompts/scope-maker';
 import { subjectMaker } from './prompts/subject-maker';
 import { Question, commitTemplate } from './commit-template';
 
-function buildQuestions(rules: Rules) {
+function buildQuestions(rules: QualifiedConfig['rules']) {
   const combinedQuestions = pipeWith<Question[]>(
     [],
     (x) => typeMaker(x, rules),
@@ -22,7 +22,7 @@ function buildQuestions(rules: Rules) {
   return combinedQuestions;
 }
 
-export async function engine(config: CommitlintConfig, prompt: PromptModule, commit: Commit) {
+export async function engine(config: QualifiedConfig, prompt: PromptModule, commit: Commit): Promise<void> {
   const questions = buildQuestions(config.rules);
 
   const answers = await prompt(questions);
