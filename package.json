@@ -56,13 +56,6 @@
     "@commitlint/cli": "^12.0.1",
     "commitizen": "4.2.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
-      "commit-msg": "commitLint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "lint-staged": {
     "*.{css,json,md}": [
       "prettier --write",
