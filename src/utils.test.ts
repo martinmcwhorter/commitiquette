@@ -1,4 +1,5 @@
-import { Case, Level } from '@commitlint/load';
+import type { TargetCaseType } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
 import { green, red } from 'chalk';
 import { getLongest, pipeWith, valueFromRule, wordCase, maxLengthTransformerFactory } from './utils';
 
@@ -28,7 +29,7 @@ describe('utils', () => {
   });
 
   describe('wordCase', () => {
-    test.each<[string, Case, string]>([
+    test.each<[string, TargetCaseType, string]>([
       ['FOO_BAR', 'lower-case', 'foo_bar'],
       ['FOO_BAR', 'lowercase', 'foo_bar'],
       ['FOO_BAR', 'lowerCase', 'foo_bar'],
@@ -55,19 +56,19 @@ describe('utils', () => {
       });
 
       test('should return false if disabled', () => {
-        const result = valueFromRule([Level.Disable, 'always', 72]);
+        const result = valueFromRule([RuleConfigSeverity.Disabled, 'always', 72]);
 
         expect(result).toBeFalsy();
       });
 
       test('should return false if applicable never', () => {
-        const result = valueFromRule([Level.Error, 'never', 72]);
+        const result = valueFromRule([RuleConfigSeverity.Error, 'never', 72]);
 
         expect(result).toBeFalsy();
       });
 
       test('should return value of rule', () => {
-        const result = valueFromRule([Level.Error, 'always', 72]);
+        const result = valueFromRule([RuleConfigSeverity.Error, 'always', 72]);
 
         expect(result).toBe(72);
       });
