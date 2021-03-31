@@ -1,4 +1,4 @@
-import { Level } from '@commitlint/load';
+import { RuleConfigSeverity } from '@commitlint/types';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from './validators';
 
 describe('validators', () => {
@@ -20,7 +20,7 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Warn, 'always', undefined],
+          rule: [RuleConfigSeverity.Warning, 'always'],
           validator: () => false,
           message: () => 'bar',
         },
@@ -33,7 +33,7 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Disable, 'always', undefined],
+          rule: [RuleConfigSeverity.Disabled, 'always'],
           validator: () => false,
           message: () => 'bar',
         },
@@ -46,7 +46,7 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Error, 'always', undefined],
+          rule: [RuleConfigSeverity.Error, 'always'],
           validator: () => true,
           message: () => 'bar',
         },
@@ -59,7 +59,7 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Error, 'always', undefined],
+          rule: [RuleConfigSeverity.Error, 'always'],
           validator: () => false,
           message: () => 'error',
         },
@@ -72,7 +72,7 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Error, 'never', undefined],
+          rule: [RuleConfigSeverity.Error, 'never'],
           validator: () => true,
           message: () => 'error',
         },
@@ -85,7 +85,7 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Error, 'never', undefined],
+          rule: [RuleConfigSeverity.Error, 'never'],
           validator: () => false,
           message: () => 'error',
         },
@@ -98,7 +98,7 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Error, 'never', 72],
+          rule: [RuleConfigSeverity.Error, 'never', 72],
           validator: () => true,
           message: (ruleValue) => `error ${ruleValue}`,
         },
@@ -111,19 +111,19 @@ describe('validators', () => {
       const result = validate([
         {
           value: 'foo',
-          rule: [Level.Error, 'always', undefined],
+          rule: [RuleConfigSeverity.Error, 'always'],
           validator: () => false,
           message: () => 'foo',
         },
         {
           value: 'foo',
-          rule: [Level.Error, 'always', undefined],
+          rule: [RuleConfigSeverity.Error, 'always'],
           validator: () => false,
           message: () => 'bar',
         },
         {
           value: 'foo',
-          rule: [Level.Error, 'always', undefined],
+          rule: [RuleConfigSeverity.Error, 'always'],
           validator: () => false,
           message: () => 'baz',
         },
@@ -137,7 +137,7 @@ describe('validators', () => {
         const result = validate([
           {
             value: 'foo',
-            rule: [Level.Error, 'always', ['lower-case', 'camel-case']],
+            rule: [RuleConfigSeverity.Error, 'always', ['lower-case', 'camel-case']],
             validator: caseValidator,
             message: () => 'error',
           },
@@ -150,7 +150,7 @@ describe('validators', () => {
         const result = validate([
           {
             value: 'FOO',
-            rule: [Level.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
+            rule: [RuleConfigSeverity.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
             validator: caseValidator,
             message: () => 'error',
           },
@@ -163,7 +163,7 @@ describe('validators', () => {
         const result = validate([
           {
             value: 'foo bar baz buz',
-            rule: [Level.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
+            rule: [RuleConfigSeverity.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
             validator: caseValidator,
             message: () => 'error',
           },
