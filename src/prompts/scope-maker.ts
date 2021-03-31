@@ -1,11 +1,12 @@
-import { Rules, Level } from '@commitlint/load';
-import { ChoiceOptions } from 'inquirer';
+import type { QualifiedRules } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
+import type { ChoiceOptions } from 'inquirer';
 import { whenFactory } from '../when';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { wordCaseFilter } from '../filters';
-import { Question } from '../commit-template';
+import type { Question } from '../commit-template';
 
-export function validatorFactory(rules: Rules) {
+export function validatorFactory(rules: QualifiedRules): (value: string) => string | true {
   return (value: string) => {
     return validate([
       {
@@ -36,11 +37,11 @@ export function validatorFactory(rules: Rules) {
   };
 }
 
-function parseEmptyScopeRule(rule: Rules['scope-empty']): [boolean, ChoiceOptions | undefined] {
+function parseEmptyScopeRule(rule: QualifiedRules['scope-empty']): [boolean, ChoiceOptions | undefined] {
   const skipChoice: ChoiceOptions = { name: ':skip', value: '' };
   if (rule !== undefined) {
     const [level, applicability] = rule;
-    if (level === Level.Error) {
+    if (level === RuleConfigSeverity.Error) {
       if (applicability === 'always') {
         return [true, skipChoice];
       }
@@ -50,15 +51,15 @@ function parseEmptyScopeRule(rule: Rules['scope-empty']): [boolean, ChoiceOption
   return [true, skipChoice];
 }
 
-function parseScopeEnumRule(rule: Rules['scope-enum']): [boolean, ChoiceOptions[] | undefined] {
+function parseScopeEnumRule(rule: QualifiedRules['scope-enum']): [boolean, ChoiceOptions[] | undefined] {
   if (rule !== undefined) {
     const [, , scopeEnum] = rule;
-    return [true, scopeEnum.map((scope) => ({ name: scope, value: scope }))];
+    return [true, (scopeEnum ?? []).map((scope) => ({ name: scope, value: scope }))];
   }
   return [false, undefined];
 }
 
-export function choicesFactory(rules: Rules): ChoiceOptions[] | undefined {
+export function choicesFactory(rules: QualifiedRules): ChoiceOptions[] | undefined {
   const choices: ChoiceOptions[] = [];
 
   const [containsSkipChoice, skipChoice] = parseEmptyScopeRule(rules['scope-empty']);
@@ -74,11 +75,11 @@ export function choicesFactory(rules: Rules): ChoiceOptions[] | undefined {
   return choices;
 }
 
-export function filterFactory(rules: Rules) {
+export function filterFactory(rules: QualifiedRules): (value: string) => string {
   return (value: string) => wordCaseFilter(value, rules['scope-case']);
 }
 
-export function scopeMaker(questions: Question[], rules: Rules): Question[] {
+export function scopeMaker(questions: Question[], rules: QualifiedRules): Question[] {
   const name = 'scope';
   const message = 'What is the scope of this change:\n';
   const when = whenFactory(rules['scope-enum'], rules['scope-empty']);
