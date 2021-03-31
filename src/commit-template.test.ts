@@ -1,4 +1,5 @@
-import { Answers, headerTemplate, commitTemplate } from './commit-template';
+import type { Answers } from './commit-template';
+import { headerTemplate, commitTemplate } from './commit-template';
 
 describe('commit-template', () => {
   describe('headerTemplate', () => {
