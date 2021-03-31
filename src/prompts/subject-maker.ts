@@ -1,11 +1,11 @@
-import { Rules } from '@commitlint/load';
+import type { QualifiedRules } from '@commitlint/types';
 import { red, green } from 'chalk';
 import { pipeWith, valueFromRule } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { fullStopFilter, wordCaseFilter } from '../filters';
 import { headerTemplate, Answers, Question } from '../commit-template';
 
-export function validatorFactory(rules: Rules) {
+export function validatorFactory(rules: QualifiedRules): (value: string, answers: Answers) => string | true {
   return (value: string, answers: Answers) => {
     const headerValue = headerTemplate(answers.type, answers.scope, value);
 
@@ -44,7 +44,7 @@ export function validatorFactory(rules: Rules) {
   };
 }
 
-export function filterFactory(rules: Rules) {
+export function filterFactory(rules: QualifiedRules): (value: string) => string {
   return (value: string) =>
     pipeWith<string>(
       value,
@@ -53,7 +53,7 @@ export function filterFactory(rules: Rules) {
     );
 }
 
-export function messageFactory(rules: Rules) {
+export function messageFactory(rules: QualifiedRules): (answers: Answers) => string {
   return (answers: Answers) => {
     const maxLength = valueFromRule(rules['header-max-length']);
 
@@ -67,7 +67,7 @@ export function messageFactory(rules: Rules) {
   };
 }
 
-export function transformerFactory(rules: Rules) {
+export function transformerFactory(rules: QualifiedRules): (value: string, answers: Answers) => string {
   const filter = filterFactory(rules);
 
   return (value: string, answers: Answers) => {
@@ -89,7 +89,7 @@ export function transformerFactory(rules: Rules) {
   };
 }
 
-export function subjectMaker(questions: Question[], rules: Rules): Question[] {
+export function subjectMaker(questions: Question[], rules: QualifiedRules): Question[] {
   const filter = filterFactory(rules);
 
   const question: Question = {
