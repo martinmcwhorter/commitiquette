@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "prepare": "husky install",
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint . --ext=\".js,.ts\""
   },
