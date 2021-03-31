@@ -1,10 +1,13 @@
-import { Case, Level, Rule } from '@commitlint/load';
+import type { TargetCaseType, RuleConfigTuple } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
 import { camelCase, capitalCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'change-case';
 import { green, red } from 'chalk';
 
-export const pipeWith = <T>(arg: T, ...fns: ((a: T) => T)[]) => fns.reduce((v, f) => f(v), arg);
+export function pipeWith<T>(arg: T, ...fns: ((a: T) => T)[]): T {
+  return fns.reduce((v, f) => f(v), arg);
+}
 
-export function getLongest(array: string[]) {
+export function getLongest(array: string[]): number {
   return array.reduce((x, y) => (x.length > y.length ? x : y)).length;
 }
 
@@ -13,7 +16,7 @@ export function assertNever(x: never): never {
   throw new Error('Unexpected object ' + x);
 }
 
-export function wordCase(value: string, rule: Case): string {
+export function wordCase(value: string, rule: TargetCaseType): string {
   switch (rule) {
     case 'lower-case':
     case 'lowerCase':
@@ -41,18 +44,18 @@ export function wordCase(value: string, rule: Case): string {
   }
 }
 
-export function valueFromRule<T>(rule: Rule<T> | undefined): undefined | T {
-  if (rule == null) {
+export function valueFromRule<T>(rule: RuleConfigTuple<T> | undefined): undefined | T {
+  if (rule === undefined) {
     return undefined;
   }
 
   const [level, applicable, value] = rule;
 
-  if (level == Level.Disable) {
+  if (level === RuleConfigSeverity.Disabled) {
     return undefined;
   }
 
-  if (applicable == 'never') {
+  if (applicable === 'never') {
     return undefined;
   }
 
@@ -60,7 +63,7 @@ export function valueFromRule<T>(rule: Rule<T> | undefined): undefined | T {
 }
 
 export function maxLengthTransformerFactory(maxLength: number | undefined) {
-  return (value: string) => {
+  return (value: string): string => {
     if (maxLength) {
       const color = value.length <= maxLength ? green : red;
       return color(`(${value.length}) ${value}`);
