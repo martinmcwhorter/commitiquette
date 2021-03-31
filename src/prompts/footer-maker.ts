@@ -1,12 +1,12 @@
-import { Rules } from '@commitlint/load';
+import type { QualifiedRules } from '@commitlint/types';
 import { valueFromRule, maxLengthTransformerFactory, pipeWith } from '../utils';
-import { Answers, Question } from '../commit-template';
+import type { Answers, Question } from '../commit-template';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
 import { leadingBlankFilter, maxLineLengthFilter } from '../filters';
 
 const BREAKING_CHANGE = 'BREAKING CHANGE: ';
 
-export function validatorFactory(rules: Rules) {
+export function validatorFactory(rules: QualifiedRules): (value: string, answers: Answers) => string | true {
   return (value: string, answers: Answers) => {
     const breaking = answers.breaking ?? '';
 
@@ -27,7 +27,7 @@ export function validatorFactory(rules: Rules) {
   };
 }
 
-export function filterFactory(rules: Rules, prefix = '') {
+export function filterFactory(rules: QualifiedRules, prefix = '') {
   return (value: string): string =>
     pipeWith<string>(
       value,
@@ -37,7 +37,7 @@ export function filterFactory(rules: Rules, prefix = '') {
     );
 }
 
-export function breakingChangeMessageFactory(rules: Rules) {
+export function breakingChangeMessageFactory(rules: QualifiedRules): () => string {
   return () => {
     const maxLength = valueFromRule(rules['footer-max-length']);
     const MESSAGE = 'Describe the breaking changes';
@@ -50,7 +50,7 @@ export function breakingChangeMessageFactory(rules: Rules) {
   };
 }
 
-export function issuesMessageFactory(rules: Rules) {
+export function issuesMessageFactory(rules: QualifiedRules): () => string {
   return () => {
     const maxLength = valueFromRule(rules['footer-max-length']);
     const MESSAGE = 'Add issue references (e.g. "fix #123", "re #123".)';
@@ -67,7 +67,7 @@ function isFixCommit(answers: Answers) {
   return answers?.type == 'fix' ?? false;
 }
 
-export function breakingTransformFactory(rules: Rules, prefix: string) {
+export function breakingTransformFactory(rules: QualifiedRules, prefix: string): (value: string) => string {
   return (value: string) => {
     const footerMaxLength = valueFromRule(rules['footer-max-length']);
 
@@ -79,7 +79,7 @@ export function breakingTransformFactory(rules: Rules, prefix: string) {
   };
 }
 
-export function issuesTransformerFactory(rules: Rules) {
+export function issuesTransformerFactory(rules: QualifiedRules): (value: string, answers: Answers) => string {
   return (value: string, answers: Answers) => {
     const breaking = answers.breaking ?? '';
 
@@ -93,7 +93,7 @@ export function issuesTransformerFactory(rules: Rules) {
   };
 }
 
-export function footerMaker(questions: Question[], rules: Rules): Question[] {
+export function footerMaker(questions: Question[], rules: QualifiedRules): Question[] {
   const footerQuestions: Question[] = [
     {
       type: 'confirm',
