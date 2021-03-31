@@ -1,4 +1,4 @@
-import type { QualifiedConfig } from '@commitlint/types';
+import type { QualifiedConfig, QualifiedRules } from '@commitlint/types';
 import type { PromptModule } from 'inquirer';
 import type { Commit } from 'commitizen';
 import { pipeWith } from './utils';
@@ -9,7 +9,7 @@ import { scopeMaker } from './prompts/scope-maker';
 import { subjectMaker } from './prompts/subject-maker';
 import { Question, commitTemplate } from './commit-template';
 
-function buildQuestions(rules: QualifiedConfig['rules']) {
+function buildQuestions(rules: QualifiedRules) {
   const combinedQuestions = pipeWith<Question[]>(
     [],
     (x) => typeMaker(x, rules),
