@@ -15,14 +15,14 @@ export function validatorFactory(rules: Rules) {
         value: value + breaking,
         rule: rules['footer-max-length'],
         validator: maxLengthValidator,
-        message: length => `Footer maximum length of ${length} has been exceeded`
+        message: (length) => `Footer maximum length of ${length} has been exceeded`,
       },
       {
         value: value + breaking,
         rule: rules['footer-min-length'],
         validator: minLengthValidator,
-        message: length => `Footer minimum length of ${length} has not been met`
-      }
+        message: (length) => `Footer minimum length of ${length} has not been met`,
+      },
     ]);
   };
 }
@@ -31,9 +31,9 @@ export function filterFactory(rules: Rules, prefix = '') {
   return (value: string): string =>
     pipeWith<string>(
       value,
-      v => prefix + v,
-      v => leadingBlankFilter(v, rules['footer-leading-blank']),
-      v => maxLineLengthFilter(v, rules['footer-max-line-length'])
+      (v) => prefix + v,
+      (v) => leadingBlankFilter(v, rules['footer-leading-blank']),
+      (v) => maxLineLengthFilter(v, rules['footer-max-line-length'])
     );
 }
 
@@ -99,33 +99,33 @@ export function footerMaker(questions: Question[], rules: Rules): Question[] {
       type: 'confirm',
       name: 'isBreaking',
       message: 'Are there any breaking changes?',
-      default: false
+      default: false,
     },
     {
       type: 'input',
       name: 'breaking',
       message: breakingChangeMessageFactory(rules),
-      when: answers => !!answers.isBreaking,
+      when: (answers) => !!answers.isBreaking,
       validate: validatorFactory(rules),
       transformer: breakingTransformFactory(rules, BREAKING_CHANGE),
-      filter: filterFactory(rules, BREAKING_CHANGE)
+      filter: filterFactory(rules, BREAKING_CHANGE),
     },
     {
       type: 'confirm',
       name: 'isIssue',
       message: 'Does this fix Does this change affect any open issues?',
-      when: answers => !isFixCommit(answers),
-      default: false
+      when: (answers) => !isFixCommit(answers),
+      default: false,
     },
     {
       type: 'input',
       name: 'issue',
       message: issuesMessageFactory(rules),
-      when: answers => isFixCommit(answers) || !!answers.isIssue,
+      when: (answers) => isFixCommit(answers) || !!answers.isIssue,
       validate: validatorFactory(rules),
       transformer: issuesTransformerFactory(rules),
-      filter: filterFactory(rules)
-    }
+      filter: filterFactory(rules),
+    },
   ];
 
   return [...questions, ...footerQuestions];

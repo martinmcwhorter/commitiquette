@@ -12,11 +12,11 @@ import { Question, commitTemplate } from './commit-template';
 function buildQuestions(rules: Rules) {
   const combinedQuestions = pipeWith<Question[]>(
     [],
-    x => typeMaker(x, rules),
-    x => scopeMaker(x, rules),
-    x => subjectMaker(x, rules),
-    x => bodyMaker(x, rules),
-    x => footerMaker(x, rules)
+    (x) => typeMaker(x, rules),
+    (x) => scopeMaker(x, rules),
+    (x) => subjectMaker(x, rules),
+    (x) => bodyMaker(x, rules),
+    (x) => footerMaker(x, rules)
   );
 
   return combinedQuestions;

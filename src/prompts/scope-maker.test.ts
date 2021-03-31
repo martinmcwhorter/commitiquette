@@ -14,7 +14,7 @@ describe('scopeMaker', () => {
       ['foo', { 'scope-case': [Level.Error, 'always', 'lower-case'] }, true],
       ['foo', { 'scope-case': [Level.Error, 'always', 'upper-case'] }, 'Scope must be in upper-case'],
       ['foo', { 'scope-case': [Level.Error, 'never', 'lower-case'] }, 'Scope must not be in lower-case'],
-      ['foo', { 'scope-case': [Level.Error, 'never', 'upper-case'] }, true]
+      ['foo', { 'scope-case': [Level.Error, 'never', 'upper-case'] }, true],
     ])('value: %s, rule: %o, expected: %s', (value, rules, expected) => {
       const fixture = validatorFactory(rules);
 
@@ -61,16 +61,16 @@ describe('scopeMaker', () => {
         expect(scopeConfig.choices).toEqual([
           {
             name: 'foo',
-            value: 'foo'
+            value: 'foo',
           },
           {
             name: 'bar',
-            value: 'bar'
+            value: 'bar',
           },
           {
             name: ':skip',
-            value: ''
-          }
+            value: '',
+          },
         ]);
       }
     });
@@ -79,7 +79,7 @@ describe('scopeMaker', () => {
   describe('choicesFactory', () => {
     it('should not allow non-empty scope when empty scope is required', () => {
       const scopeConfig = choicesFactory({
-        'scope-empty': [2, 'always', undefined]
+        'scope-empty': [2, 'always', undefined],
       });
 
       expect(scopeConfig).toEqual([{ name: ':skip', value: '' }]);
@@ -87,7 +87,7 @@ describe('scopeMaker', () => {
 
     it('should not allow skipping scope when is required', () => {
       const scopeConfig = choicesFactory({
-        'scope-empty': [2, 'never', undefined]
+        'scope-empty': [2, 'never', undefined],
       });
 
       expect(scopeConfig).not.toContainEqual({ name: ':skip', value: '' });
@@ -96,7 +96,7 @@ describe('scopeMaker', () => {
 
   it('should allow skipping scope when "scope-empty" severity is "warn"', () => {
     const scopeConfig = choicesFactory({
-      'scope-empty': [1, 'always', undefined]
+      'scope-empty': [1, 'always', undefined],
     });
 
     expect(scopeConfig).toContainEqual({ name: ':skip', value: '' });
@@ -111,7 +111,7 @@ describe('scopeMaker', () => {
   describe('filterFactory', () => {
     test.each<[Rule<Case>, string, string]>([
       [[Level.Error, 'always', 'camel-case'], 'FOO_BAR', 'fooBar'],
-      [[Level.Error, 'never', 'camel-case'], 'FOO_BAR', 'FOO_BAR']
+      [[Level.Error, 'never', 'camel-case'], 'FOO_BAR', 'FOO_BAR'],
     ])('should return case filtered string rule: %s, value: %s, expected: %s', (rule, value, expected) => {
       const rules = { 'scope-case': rule };
       const fixture = filterFactory(rules);

@@ -12,26 +12,26 @@ export function validatorFactory(rules: Rules) {
         value,
         rule: rules['scope-max-length'],
         validator: maxLengthValidator,
-        message: length => `Scope maximum length of ${length} has been exceeded`
+        message: (length) => `Scope maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['scope-min-length'],
         validator: minLengthValidator,
-        message: length => `Scope minimum length of ${length} has not been met`
+        message: (length) => `Scope minimum length of ${length} has not been met`,
       },
       {
         value,
         rule: rules['scope-empty'],
         validator: emptyValidator,
-        message: () => 'Scope cannot be empty'
+        message: () => 'Scope cannot be empty',
       },
       {
         value,
         rule: rules['scope-case'],
         validator: caseValidator,
-        message: (ruleValue, applicable) => `Scope must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`
-      }
+        message: (ruleValue, applicable) => `Scope must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`,
+      },
     ]);
   };
 }
@@ -53,7 +53,7 @@ function parseEmptyScopeRule(rule: Rules['scope-empty']): [boolean, ChoiceOption
 function parseScopeEnumRule(rule: Rules['scope-enum']): [boolean, ChoiceOptions[] | undefined] {
   if (rule !== undefined) {
     const [, , scopeEnum] = rule;
-    return [true, scopeEnum.map(scope => ({ name: scope, value: scope }))];
+    return [true, scopeEnum.map((scope) => ({ name: scope, value: scope }))];
   }
   return [false, undefined];
 }
@@ -93,7 +93,7 @@ export function scopeMaker(questions: Question[], rules: Rules): Question[] {
       validate: validatorFactory(rules),
       filter: filterFactory(rules),
       choices,
-      type: 'list'
+      type: 'list',
     };
   } else {
     question = {
@@ -102,7 +102,7 @@ export function scopeMaker(questions: Question[], rules: Rules): Question[] {
       when,
       validate: validatorFactory(rules),
       filter: filterFactory(rules),
-      type: 'input'
+      type: 'input',
     };
   }
 

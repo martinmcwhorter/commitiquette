@@ -14,32 +14,32 @@ export function validatorFactory(rules: Rules) {
         value: headerValue,
         rule: rules['header-max-length'],
         validator: maxLengthValidator,
-        message: length => `Header "${headerValue}" cannot be longer than ${length}`
+        message: (length) => `Header "${headerValue}" cannot be longer than ${length}`,
       },
       {
         value,
         rule: rules['subject-max-length'],
         validator: maxLengthValidator,
-        message: length => `Subject maximum length of ${length} has been exceeded`
+        message: (length) => `Subject maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['subject-min-length'],
         validator: minLengthValidator,
-        message: length => `Subject minimum length of ${length} has not been met`
+        message: (length) => `Subject minimum length of ${length} has not been met`,
       },
       {
         value,
         rule: rules['subject-empty'],
         validator: emptyValidator,
-        message: () => 'Subject cannot be empty'
+        message: () => 'Subject cannot be empty',
       },
       {
         value,
         rule: rules['subject-case'],
         validator: caseValidator,
-        message: (ruleValue, applicable) => `Subject must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`
-      }
+        message: (ruleValue, applicable) => `Subject must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`,
+      },
     ]);
   };
 }
@@ -48,8 +48,8 @@ export function filterFactory(rules: Rules) {
   return (value: string) =>
     pipeWith<string>(
       value,
-      v => wordCaseFilter(v, rules['subject-case']),
-      v => fullStopFilter(v, rules['subject-full-stop'])
+      (v) => wordCaseFilter(v, rules['subject-case']),
+      (v) => fullStopFilter(v, rules['subject-full-stop'])
     );
 }
 
@@ -61,8 +61,9 @@ export function messageFactory(rules: Rules) {
       return `Write a short, imperative tense description of the change:\n`;
     }
 
-    return `Write a short, imperative tense description of the change (max ${maxLength -
-      headerTemplate(answers.type, answers.scope).length} chars):\n`;
+    return `Write a short, imperative tense description of the change (max ${
+      maxLength - headerTemplate(answers.type, answers.scope).length
+    } chars):\n`;
   };
 }
 
@@ -97,7 +98,7 @@ export function subjectMaker(questions: Question[], rules: Rules): Question[] {
     type: 'input',
     validate: validatorFactory(rules),
     filter,
-    transformer: transformerFactory(rules)
+    transformer: transformerFactory(rules),
   };
 
   return [...questions, question];

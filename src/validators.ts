@@ -15,7 +15,7 @@ export function validate(
   }[]
 ): string | true {
   const errorMessages: string[] = validators
-    .map(v => {
+    .map((v) => {
       if (v.rule == undefined) {
         return true;
       }
@@ -43,7 +43,7 @@ export function validate(
 
       return true;
     })
-    .filter(message => message !== true) as string[];
+    .filter((message) => message !== true) as string[];
 
   if (errorMessages.length === 0) {
     return true;
@@ -57,7 +57,7 @@ export function maxLengthValidator(value: string, length: number): boolean {
 }
 
 export function maxLineLengthValidator(value: string, length: number): boolean {
-  return value.split(/\r?\n/).every(line => maxLengthValidator(line, length));
+  return value.split(/\r?\n/).every((line) => maxLengthValidator(line, length));
 }
 
 export function minLengthValidator(value: string, length: number): boolean {
@@ -74,8 +74,8 @@ export function caseValidator(value: string, rule: Case | Case[], inclusive = tr
   }
 
   if (inclusive) {
-    return rule.every(r => wordCase(value, r) == value);
+    return rule.every((r) => wordCase(value, r) == value);
   }
 
-  return rule.some(r => wordCase(value, r) == value);
+  return rule.some((r) => wordCase(value, r) == value);
 }

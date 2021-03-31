@@ -9,8 +9,8 @@ describe('validators', () => {
           value: 'foo',
           rule: undefined,
           validator: () => false,
-          message: () => 'bar'
-        }
+          message: () => 'bar',
+        },
       ]);
 
       expect(result).toBe(true);
@@ -22,8 +22,8 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Warn, 'always', undefined],
           validator: () => false,
-          message: () => 'bar'
-        }
+          message: () => 'bar',
+        },
       ]);
 
       expect(result).toBe(true);
@@ -35,8 +35,8 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Disable, 'always', undefined],
           validator: () => false,
-          message: () => 'bar'
-        }
+          message: () => 'bar',
+        },
       ]);
 
       expect(result).toBe(true);
@@ -48,8 +48,8 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Error, 'always', undefined],
           validator: () => true,
-          message: () => 'bar'
-        }
+          message: () => 'bar',
+        },
       ]);
 
       expect(result).toBe(true);
@@ -61,8 +61,8 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Error, 'always', undefined],
           validator: () => false,
-          message: () => 'error'
-        }
+          message: () => 'error',
+        },
       ]);
 
       expect(result).toBe('error');
@@ -74,8 +74,8 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Error, 'never', undefined],
           validator: () => true,
-          message: () => 'error'
-        }
+          message: () => 'error',
+        },
       ]);
 
       expect(result).toBe('error');
@@ -87,8 +87,8 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Error, 'never', undefined],
           validator: () => false,
-          message: () => 'error'
-        }
+          message: () => 'error',
+        },
       ]);
 
       expect(result).toBe(true);
@@ -100,8 +100,8 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Error, 'never', 72],
           validator: () => true,
-          message: ruleValue => `error ${ruleValue}`
-        }
+          message: (ruleValue) => `error ${ruleValue}`,
+        },
       ]);
 
       expect(result).toBe('error 72');
@@ -113,20 +113,20 @@ describe('validators', () => {
           value: 'foo',
           rule: [Level.Error, 'always', undefined],
           validator: () => false,
-          message: () => 'foo'
+          message: () => 'foo',
         },
         {
           value: 'foo',
           rule: [Level.Error, 'always', undefined],
           validator: () => false,
-          message: () => 'bar'
+          message: () => 'bar',
         },
         {
           value: 'foo',
           rule: [Level.Error, 'always', undefined],
           validator: () => false,
-          message: () => 'baz'
-        }
+          message: () => 'baz',
+        },
       ]);
 
       expect(result).toBe('foo\nbar\nbaz');
@@ -139,8 +139,8 @@ describe('validators', () => {
             value: 'foo',
             rule: [Level.Error, 'always', ['lower-case', 'camel-case']],
             validator: caseValidator,
-            message: () => 'error'
-          }
+            message: () => 'error',
+          },
         ]);
 
         expect(result).toBe(true);
@@ -152,8 +152,8 @@ describe('validators', () => {
             value: 'FOO',
             rule: [Level.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
             validator: caseValidator,
-            message: () => 'error'
-          }
+            message: () => 'error',
+          },
         ]);
 
         expect(result).toBe('error');
@@ -165,8 +165,8 @@ describe('validators', () => {
             value: 'foo bar baz buz',
             rule: [Level.Error, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
             validator: caseValidator,
-            message: () => 'error'
-          }
+            message: () => 'error',
+          },
         ]);
 
         expect(result).toBe(true);

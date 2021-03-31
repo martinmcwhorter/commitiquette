@@ -14,26 +14,26 @@ export function validatorFactory(rules: Rules) {
         value,
         rule: rules['type-max-length'],
         validator: maxLengthValidator,
-        message: length => `Type maximum length of ${length} has been exceeded`
+        message: (length) => `Type maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['type-min-length'],
         validator: minLengthValidator,
-        message: length => `Type minimum length of ${length} has not been met`
+        message: (length) => `Type minimum length of ${length} has not been met`,
       },
       {
         value,
         rule: rules['type-empty'],
         validator: emptyValidator,
-        message: () => 'Type cannot be empty'
+        message: () => 'Type cannot be empty',
       },
       {
         value,
         rule: rules['type-case'],
         validator: caseValidator,
-        message: (ruleValue, applicable) => `Type must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`
-      }
+        message: (ruleValue, applicable) => `Type must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`,
+      },
     ]);
   };
 }
@@ -48,19 +48,19 @@ export function choicesFactory(rules: Rules, commitTypes: CommitType) {
   let choices: ChoiceOptions[] | undefined;
   if (typeEnum && typeEnum.length > 0) {
     const longest = getLongest(typeEnum);
-    choices = typeEnum.map(value => ({
+    choices = typeEnum.map((value) => ({
       name: `${value.padEnd(longest)}: ${commitTypes[value]?.description ?? ''}`,
       value: value,
-      short: value
+      short: value,
     }));
   }
 
   return (
     choices ||
-    Object.keys(commitTypes).map(commitType => ({
+    Object.keys(commitTypes).map((commitType) => ({
       name: `${commitType}: ${commitTypes[commitType].description ?? ''}`,
       value: commitType,
-      short: commitType
+      short: commitType,
     }))
   );
 }
@@ -73,7 +73,7 @@ export function typeMaker(questions: Question[], rules: Rules): Question[] {
     choices: choicesFactory(rules, types),
     validate: validatorFactory(rules),
     when: whenFactory(rules['type-enum'], rules['type-empty']),
-    filter: filterFactory(rules)
+    filter: filterFactory(rules),
   };
 
   return [...questions, question];

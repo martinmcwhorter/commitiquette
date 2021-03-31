@@ -68,7 +68,7 @@ describe('when', () => {
       [undefined, undefined, true],
       [undefined, hidePromptEmptyRule, false],
       [hidePromptEnumRule, undefined, false],
-      [hidePromptEnumRule, hidePromptEmptyRule, false]
+      [hidePromptEnumRule, hidePromptEmptyRule, false],
     ])('%o, %o', (enumRule, emptyRule, expected) => {
       const result = whenFactory(enumRule, emptyRule)();
 

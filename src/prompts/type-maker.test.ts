@@ -17,7 +17,7 @@ describe('type-maker', () => {
       [{ 'type-case': [Level.Error, 'never', 'upper-case'] }, 'FOO_BAR', 'Type must not be in upper-case'],
       [{ 'type-case': [Level.Error, 'never', 'upper-case'] }, 'foo bar', true],
       [{ 'type-case': [Level.Error, 'always', 'upper-case'] }, 'FOO_BAR', true],
-      [{ 'type-case': [Level.Error, 'always', 'upper-case'] }, 'foo bar', 'Type must be in upper-case']
+      [{ 'type-case': [Level.Error, 'always', 'upper-case'] }, 'foo bar', 'Type must be in upper-case'],
     ])(`should validate rule '%o', value '%s', expected '%s'`, (rules, value, expected) => {
       const factory = validatorFactory(rules);
 
@@ -45,61 +45,61 @@ describe('type-maker', () => {
         {
           name: 'feat: A new feature',
           short: 'feat',
-          value: 'feat'
+          value: 'feat',
         },
         {
           name: 'fix: A bug fix',
           short: 'fix',
-          value: 'fix'
+          value: 'fix',
         },
         {
           name: 'docs: Documentation only changes',
           short: 'docs',
-          value: 'docs'
+          value: 'docs',
         },
         {
           name:
             'style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)',
           short: 'style',
-          value: 'style'
+          value: 'style',
         },
         {
           name: 'refactor: A code change that neither fixes a bug nor adds a feature',
           short: 'refactor',
-          value: 'refactor'
+          value: 'refactor',
         },
         {
           name: 'perf: A code change that improves performance',
           short: 'perf',
-          value: 'perf'
+          value: 'perf',
         },
         {
           name: 'test: Adding missing tests or correcting existing tests',
           short: 'test',
-          value: 'test'
+          value: 'test',
         },
         {
           name:
             'build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)',
           short: 'build',
-          value: 'build'
+          value: 'build',
         },
         {
           name:
             'ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)',
           short: 'ci',
-          value: 'ci'
+          value: 'ci',
         },
         {
           name: "chore: Other changes that don't modify src or test files",
           short: 'chore',
-          value: 'chore'
+          value: 'chore',
         },
         {
           name: 'revert: Reverts a previous commit',
           short: 'revert',
-          value: 'revert'
-        }
+          value: 'revert',
+        },
       ]);
     });
 
@@ -110,18 +110,18 @@ describe('type-maker', () => {
         {
           name: 'foo: ',
           short: 'foo',
-          value: 'foo'
+          value: 'foo',
         },
         {
           name: 'bar: ',
           short: 'bar',
-          value: 'bar'
+          value: 'bar',
         },
         {
           name: 'baz: ',
           short: 'baz',
-          value: 'baz'
-        }
+          value: 'baz',
+        },
       ]);
 
       describe('should return choices with conventional-conmmit-types descriptions', () => {
@@ -130,7 +130,7 @@ describe('type-maker', () => {
           {
             foo: { description: 'Fooey', title: '' },
             bar: { description: 'Barey', title: '' },
-            baz: { description: 'Bazey', title: '' }
+            baz: { description: 'Bazey', title: '' },
           }
         );
 
@@ -138,18 +138,18 @@ describe('type-maker', () => {
           {
             name: 'foo: Fooey',
             short: 'foo',
-            value: 'foo'
+            value: 'foo',
           },
           {
             name: 'bar: Barey',
             short: 'bar',
-            value: 'bar'
+            value: 'bar',
           },
           {
             name: 'baz: Bazey',
             short: 'baz',
-            value: 'baz'
-          }
+            value: 'baz',
+          },
         ]);
       });
 
@@ -160,7 +160,7 @@ describe('type-maker', () => {
             foo: { description: 'Fooey', title: '' },
             bar: { description: 'Barey', title: '' },
             baz: { description: 'Bazey', title: '' },
-            'very-long': { description: 'Longey', title: '' }
+            'very-long': { description: 'Longey', title: '' },
           }
         );
 
@@ -168,23 +168,23 @@ describe('type-maker', () => {
           {
             name: 'foo      : Fooey',
             short: 'foo',
-            value: 'foo'
+            value: 'foo',
           },
           {
             name: 'bar      : Barey',
             short: 'bar',
-            value: 'bar'
+            value: 'bar',
           },
           {
             name: 'baz      : Bazey',
             short: 'baz',
-            value: 'baz'
+            value: 'baz',
           },
           {
             name: 'very-long: Longey',
             short: 'very-long',
-            value: 'very-long'
-          }
+            value: 'very-long',
+          },
         ]);
       });
     });

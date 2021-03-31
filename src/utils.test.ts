@@ -13,7 +13,7 @@ describe('utils', () => {
 
   describe('pipeWith', () => {
     test('pipes value to function', () => {
-      const result = pipeWith('hello ', x => (x += 'world'));
+      const result = pipeWith('hello ', (x) => (x += 'world'));
 
       expect(result).toBe('hello world');
     });
@@ -40,7 +40,7 @@ describe('utils', () => {
       ['fooBar', 'kebab-case', 'foo-bar'],
       ['fooBar', 'upper-case', 'FOOBAR'],
       ['fooBar', 'uppercase', 'FOOBAR'],
-      ['foo_Bar', 'camel-case', 'fooBar']
+      ['foo_Bar', 'camel-case', 'fooBar'],
     ])('wordCase(%s, %s): %s', (value, rule, expected) => {
       const result = wordCase(value, rule);
 
@@ -77,7 +77,7 @@ describe('utils', () => {
       test.each<[number | undefined, string, string]>([
         [3, 'foo', green('(3) foo')],
         [3, 'foo bar', red('(7) foo bar')],
-        [undefined, 'foo', 'foo']
+        [undefined, 'foo', 'foo'],
       ])('should transform when length: %n to expected: %s', (length, value, expected) => {
         const factory = maxLengthTransformerFactory(length);
 
