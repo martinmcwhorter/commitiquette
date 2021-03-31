@@ -1,4 +1,5 @@
-import { Level, Rules } from '@commitlint/load';
+import type { RuleConfigQuality, RulesConfig } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
 import { types } from 'conventional-commit-types';
 
 import { filterFactory, choicesFactory, validatorFactory, typeMaker } from './type-maker';
@@ -7,17 +8,25 @@ jest.mock('conventional-commit-types');
 
 describe('type-maker', () => {
   describe('validatorFactory', () => {
-    test.each<[Rules, string, string | true]>([
-      [{ 'type-empty': [Level.Error, 'never', undefined] }, '', 'Type cannot be empty'],
-      [{ 'type-empty': [Level.Error, 'never', undefined] }, 'foo', true],
-      [{ 'type-max-length': [Level.Error, 'always', 3] }, 'too long', 'Type maximum length of 3 has been exceeded'],
-      [{ 'type-max-length': [Level.Error, 'always', 72] }, 'too long', true],
-      [{ 'type-min-length': [Level.Error, 'always', 3] }, 'f', 'Type minimum length of 3 has not been met'],
-      [{ 'type-min-length': [Level.Error, 'always', 3] }, 'foo bar baz', true],
-      [{ 'type-case': [Level.Error, 'never', 'upper-case'] }, 'FOO_BAR', 'Type must not be in upper-case'],
-      [{ 'type-case': [Level.Error, 'never', 'upper-case'] }, 'foo bar', true],
-      [{ 'type-case': [Level.Error, 'always', 'upper-case'] }, 'FOO_BAR', true],
-      [{ 'type-case': [Level.Error, 'always', 'upper-case'] }, 'foo bar', 'Type must be in upper-case'],
+    test.each<[Partial<RulesConfig<RuleConfigQuality.Qualified>>, string, string | true]>([
+      [{ 'type-empty': [RuleConfigSeverity.Error, 'never'] }, '', 'Type cannot be empty'],
+      [{ 'type-empty': [RuleConfigSeverity.Error, 'never'] }, 'foo', true],
+      [
+        { 'type-max-length': [RuleConfigSeverity.Error, 'always', 3] },
+        'too long',
+        'Type maximum length of 3 has been exceeded',
+      ],
+      [{ 'type-max-length': [RuleConfigSeverity.Error, 'always', 72] }, 'too long', true],
+      [
+        { 'type-min-length': [RuleConfigSeverity.Error, 'always', 3] },
+        'f',
+        'Type minimum length of 3 has not been met',
+      ],
+      [{ 'type-min-length': [RuleConfigSeverity.Error, 'always', 3] }, 'foo bar baz', true],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'never', 'upper-case'] }, 'FOO_BAR', 'Type must not be in upper-case'],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'never', 'upper-case'] }, 'foo bar', true],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'always', 'upper-case'] }, 'FOO_BAR', true],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'always', 'upper-case'] }, 'foo bar', 'Type must be in upper-case'],
     ])(`should validate rule '%o', value '%s', expected '%s'`, (rules, value, expected) => {
       const factory = validatorFactory(rules);
 
@@ -29,7 +38,7 @@ describe('type-maker', () => {
 
   describe('filterFactory', () => {
     test('should return filter that applies given type-case rule', () => {
-      const factory = filterFactory({ 'type-case': [Level.Error, 'always', 'camel-case'] });
+      const factory = filterFactory({ 'type-case': [RuleConfigSeverity.Error, 'always', 'camel-case'] });
 
       const result = factory('FOO_BAR');
 
@@ -104,7 +113,7 @@ describe('type-maker', () => {
     });
 
     describe('should return choices if type-enum exits', () => {
-      const result = choicesFactory({ 'type-enum': [Level.Error, 'always', ['foo', 'bar', 'baz']] }, {});
+      const result = choicesFactory({ 'type-enum': [RuleConfigSeverity.Error, 'always', ['foo', 'bar', 'baz']] }, {});
 
       expect(result).toEqual([
         {
@@ -126,7 +135,7 @@ describe('type-maker', () => {
 
       describe('should return choices with conventional-conmmit-types descriptions', () => {
         const result = choicesFactory(
-          { 'type-enum': [Level.Error, 'always', ['foo', 'bar', 'baz']] },
+          { 'type-enum': [RuleConfigSeverity.Error, 'always', ['foo', 'bar', 'baz']] },
           {
             foo: { description: 'Fooey', title: '' },
             bar: { description: 'Barey', title: '' },
@@ -155,7 +164,7 @@ describe('type-maker', () => {
 
       describe('should pad the name to match the longest', () => {
         const result = choicesFactory(
-          { 'type-enum': [Level.Error, 'always', ['foo', 'bar', 'baz', 'very-long']] },
+          { 'type-enum': [RuleConfigSeverity.Error, 'always', ['foo', 'bar', 'baz', 'very-long']] },
           {
             foo: { description: 'Fooey', title: '' },
             bar: { description: 'Barey', title: '' },
