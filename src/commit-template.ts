@@ -1,4 +1,4 @@
-import { DistinctQuestion } from 'inquirer';
+import type { DistinctQuestion } from 'inquirer';
 
 export type Answers = {
   type?: string;
@@ -32,7 +32,7 @@ function renderSection(value: string | undefined): string {
   return value ? `\n${value}` : '';
 }
 
-export function commitTemplate(answers: Answers) {
+export function commitTemplate(answers: Answers): string {
   let template = headerTemplate(answers.type, answers.scope, answers.subject);
 
   template += renderSection(answers.body);
