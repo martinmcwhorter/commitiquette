@@ -1,20 +1,29 @@
 import { ListQuestion } from 'inquirer';
-import { Rule, Case, Level, Rules } from '@commitlint/load';
+import type { RuleConfig, RuleConfigQuality, RulesConfig, TargetCaseType } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
 import { scopeMaker, filterFactory, validatorFactory, choicesFactory } from './scope-maker';
 
 describe('scopeMaker', () => {
   describe('validatorFactory', () => {
-    test.each<[string, Rules, string | true]>([
-      ['', { 'scope-empty': [Level.Error, 'never', undefined] }, 'Scope cannot be empty'],
-      ['foo', { 'scope-empty': [Level.Error, 'never', undefined] }, true],
-      ['foo', { 'scope-max-length': [Level.Error, 'always', 72] }, true],
-      ['foo bar', { 'scope-max-length': [Level.Error, 'always', 3] }, 'Scope maximum length of 3 has been exceeded'],
-      ['foo', { 'scope-min-length': [Level.Error, 'always', 3] }, true],
-      ['f', { 'scope-min-length': [Level.Error, 'always', 3] }, 'Scope minimum length of 3 has not been met'],
-      ['foo', { 'scope-case': [Level.Error, 'always', 'lower-case'] }, true],
-      ['foo', { 'scope-case': [Level.Error, 'always', 'upper-case'] }, 'Scope must be in upper-case'],
-      ['foo', { 'scope-case': [Level.Error, 'never', 'lower-case'] }, 'Scope must not be in lower-case'],
-      ['foo', { 'scope-case': [Level.Error, 'never', 'upper-case'] }, true]
+    test.each<[string, Partial<RulesConfig<RuleConfigQuality.Qualified>>, string | true]>([
+      ['', { 'scope-empty': [RuleConfigSeverity.Error, 'never'] }, 'Scope cannot be empty'],
+      ['foo', { 'scope-empty': [RuleConfigSeverity.Error, 'never'] }, true],
+      ['foo', { 'scope-max-length': [RuleConfigSeverity.Error, 'always', 72] }, true],
+      [
+        'foo bar',
+        { 'scope-max-length': [RuleConfigSeverity.Error, 'always', 3] },
+        'Scope maximum length of 3 has been exceeded',
+      ],
+      ['foo', { 'scope-min-length': [RuleConfigSeverity.Error, 'always', 3] }, true],
+      [
+        'f',
+        { 'scope-min-length': [RuleConfigSeverity.Error, 'always', 3] },
+        'Scope minimum length of 3 has not been met',
+      ],
+      ['foo', { 'scope-case': [RuleConfigSeverity.Error, 'always', 'lower-case'] }, true],
+      ['foo', { 'scope-case': [RuleConfigSeverity.Error, 'always', 'upper-case'] }, 'Scope must be in upper-case'],
+      ['foo', { 'scope-case': [RuleConfigSeverity.Error, 'never', 'lower-case'] }, 'Scope must not be in lower-case'],
+      ['foo', { 'scope-case': [RuleConfigSeverity.Error, 'never', 'upper-case'] }, true],
     ])('value: %s, rule: %o, expected: %s', (value, rules, expected) => {
       const fixture = validatorFactory(rules);
 
@@ -35,7 +44,7 @@ describe('scopeMaker', () => {
     });
 
     test('should not prompt when scope-empty', () => {
-      const scopeConfig = scopeMaker([], { 'scope-empty': [2, 'always', undefined] })[0];
+      const scopeConfig = scopeMaker([], { 'scope-empty': [2, 'always'] })[0];
 
       if (typeof scopeConfig.when == 'function') {
         const result = scopeConfig.when({});
@@ -61,16 +70,16 @@ describe('scopeMaker', () => {
         expect(scopeConfig.choices).toEqual([
           {
             name: 'foo',
-            value: 'foo'
+            value: 'foo',
           },
           {
             name: 'bar',
-            value: 'bar'
+            value: 'bar',
           },
           {
             name: ':skip',
-            value: ''
-          }
+            value: '',
+          },
         ]);
       }
     });
@@ -79,7 +88,7 @@ describe('scopeMaker', () => {
   describe('choicesFactory', () => {
     it('should not allow non-empty scope when empty scope is required', () => {
       const scopeConfig = choicesFactory({
-        'scope-empty': [2, 'always', undefined]
+        'scope-empty': [2, 'always'],
       });
 
       expect(scopeConfig).toEqual([{ name: ':skip', value: '' }]);
@@ -87,7 +96,7 @@ describe('scopeMaker', () => {
 
     it('should not allow skipping scope when is required', () => {
       const scopeConfig = choicesFactory({
-        'scope-empty': [2, 'never', undefined]
+        'scope-empty': [2, 'never'],
       });
 
       expect(scopeConfig).not.toContainEqual({ name: ':skip', value: '' });
@@ -96,7 +105,7 @@ describe('scopeMaker', () => {
 
   it('should allow skipping scope when "scope-empty" severity is "warn"', () => {
     const scopeConfig = choicesFactory({
-      'scope-empty': [1, 'always', undefined]
+      'scope-empty': [1, 'always'],
     });
 
     expect(scopeConfig).toContainEqual({ name: ':skip', value: '' });
@@ -109,9 +118,9 @@ describe('scopeMaker', () => {
   });
 
   describe('filterFactory', () => {
-    test.each<[Rule<Case>, string, string]>([
-      [[Level.Error, 'always', 'camel-case'], 'FOO_BAR', 'fooBar'],
-      [[Level.Error, 'never', 'camel-case'], 'FOO_BAR', 'FOO_BAR']
+    test.each<[RuleConfig<RuleConfigQuality.Qualified, TargetCaseType>, string, string]>([
+      [[RuleConfigSeverity.Error, 'always', 'camel-case'], 'FOO_BAR', 'fooBar'],
+      [[RuleConfigSeverity.Error, 'never', 'camel-case'], 'FOO_BAR', 'FOO_BAR'],
     ])('should return case filtered string rule: %s, value: %s, expected: %s', (rule, value, expected) => {
       const rules = { 'scope-case': rule };
       const fixture = filterFactory(rules);

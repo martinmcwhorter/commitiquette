@@ -1,42 +1,43 @@
-import { Level, Rule } from '@commitlint/load';
+import type { RuleConfigTuple } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
 
-export function enumWhen(rule: Rule<string[]> | undefined) {
+export function enumWhen(rule: RuleConfigTuple<string[]> | undefined): boolean {
   if (rule == null) {
     return true;
   }
 
   const [level, applicable, value] = rule;
 
-  if (level == Level.Disable) {
+  if (level === RuleConfigSeverity.Disabled) {
     return true;
   }
 
-  const emptyEnum = value.length == 0;
+  const emptyEnum = value?.length === 0;
 
-  if (applicable == 'always') {
+  if (applicable === 'always') {
     return !emptyEnum;
   }
 
   return true;
 }
 
-export function emptyWhen(rule: Rule<undefined> | undefined) {
+export function emptyWhen(rule: RuleConfigTuple<undefined> | undefined): boolean {
   if (rule == null) {
     return true;
   }
 
   const [level, applicable] = rule;
 
-  if (level == Level.Disable) {
+  if (level === RuleConfigSeverity.Disabled) {
     return true;
   }
 
-  return applicable == 'never';
+  return applicable === 'never';
 }
 
 export function whenFactory(
-  enumRule: Rule<string[]> | undefined,
-  emptyRule: Rule<undefined> | undefined
+  enumRule: RuleConfigTuple<string[]> | undefined,
+  emptyRule: RuleConfigTuple<undefined> | undefined
 ): () => boolean {
   return () => {
     // return false if either of the rules return false

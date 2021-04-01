@@ -1,11 +1,11 @@
-import { Rules } from '@commitlint/load';
+import type { QualifiedRules } from '@commitlint/types';
 import { red, green } from 'chalk';
 import { pipeWith, valueFromRule } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
 import { fullStopFilter, wordCaseFilter } from '../filters';
 import { headerTemplate, Answers, Question } from '../commit-template';
 
-export function validatorFactory(rules: Rules) {
+export function validatorFactory(rules: QualifiedRules): (value: string, answers: Answers) => string | true {
   return (value: string, answers: Answers) => {
     const headerValue = headerTemplate(answers.type, answers.scope, value);
 
@@ -14,37 +14,37 @@ export function validatorFactory(rules: Rules) {
         value: headerValue,
         rule: rules['header-max-length'],
         validator: maxLengthValidator,
-        message: length => `Header "${headerValue}" cannot be longer than ${length}`
+        message: length => `Header "${headerValue}" cannot be longer than ${length}`,
       },
       {
         value,
         rule: rules['subject-max-length'],
         validator: maxLengthValidator,
-        message: length => `Subject maximum length of ${length} has been exceeded`
+        message: length => `Subject maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['subject-min-length'],
         validator: minLengthValidator,
-        message: length => `Subject minimum length of ${length} has not been met`
+        message: length => `Subject minimum length of ${length} has not been met`,
       },
       {
         value,
         rule: rules['subject-empty'],
         validator: emptyValidator,
-        message: () => 'Subject cannot be empty'
+        message: () => 'Subject cannot be empty',
       },
       {
         value,
         rule: rules['subject-case'],
         validator: caseValidator,
-        message: (ruleValue, applicable) => `Subject must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`
-      }
+        message: (ruleValue, applicable) => `Subject must ${applicable == 'never' ? 'not ' : ''}be in ${ruleValue}`,
+      },
     ]);
   };
 }
 
-export function filterFactory(rules: Rules) {
+export function filterFactory(rules: QualifiedRules): (value: string) => string {
   return (value: string) =>
     pipeWith<string>(
       value,
@@ -53,7 +53,7 @@ export function filterFactory(rules: Rules) {
     );
 }
 
-export function messageFactory(rules: Rules) {
+export function messageFactory(rules: QualifiedRules): (answers: Answers) => string {
   return (answers: Answers) => {
     const maxLength = valueFromRule(rules['header-max-length']);
 
@@ -61,12 +61,13 @@ export function messageFactory(rules: Rules) {
       return `Write a short, imperative tense description of the change:\n`;
     }
 
-    return `Write a short, imperative tense description of the change (max ${maxLength -
-      headerTemplate(answers.type, answers.scope).length} chars):\n`;
+    return `Write a short, imperative tense description of the change (max ${
+      maxLength - headerTemplate(answers.type, answers.scope).length
+    } chars):\n`;
   };
 }
 
-export function transformerFactory(rules: Rules) {
+export function transformerFactory(rules: QualifiedRules): (value: string, answers: Answers) => string {
   const filter = filterFactory(rules);
 
   return (value: string, answers: Answers) => {
@@ -88,7 +89,7 @@ export function transformerFactory(rules: Rules) {
   };
 }
 
-export function subjectMaker(questions: Question[], rules: Rules): Question[] {
+export function subjectMaker(questions: Question[], rules: QualifiedRules): Question[] {
   const filter = filterFactory(rules);
 
   const question: Question = {
@@ -97,7 +98,7 @@ export function subjectMaker(questions: Question[], rules: Rules): Question[] {
     type: 'input',
     validate: validatorFactory(rules),
     filter,
-    transformer: transformerFactory(rules)
+    transformer: transformerFactory(rules),
   };
 
   return [...questions, question];

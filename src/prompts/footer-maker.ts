@@ -1,12 +1,12 @@
-import { Rules } from '@commitlint/load';
+import type { QualifiedRules } from '@commitlint/types';
 import { valueFromRule, maxLengthTransformerFactory, pipeWith } from '../utils';
-import { Answers, Question } from '../commit-template';
+import type { Answers, Question } from '../commit-template';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
 import { leadingBlankFilter, maxLineLengthFilter } from '../filters';
 
 const BREAKING_CHANGE = 'BREAKING CHANGE: ';
 
-export function validatorFactory(rules: Rules) {
+export function validatorFactory(rules: QualifiedRules): (value: string, answers: Answers) => string | true {
   return (value: string, answers: Answers) => {
     const breaking = answers.breaking ?? '';
 
@@ -15,19 +15,19 @@ export function validatorFactory(rules: Rules) {
         value: value + breaking,
         rule: rules['footer-max-length'],
         validator: maxLengthValidator,
-        message: length => `Footer maximum length of ${length} has been exceeded`
+        message: length => `Footer maximum length of ${length} has been exceeded`,
       },
       {
         value: value + breaking,
         rule: rules['footer-min-length'],
         validator: minLengthValidator,
-        message: length => `Footer minimum length of ${length} has not been met`
-      }
+        message: length => `Footer minimum length of ${length} has not been met`,
+      },
     ]);
   };
 }
 
-export function filterFactory(rules: Rules, prefix = '') {
+export function filterFactory(rules: QualifiedRules, prefix = '') {
   return (value: string): string =>
     pipeWith<string>(
       value,
@@ -37,7 +37,7 @@ export function filterFactory(rules: Rules, prefix = '') {
     );
 }
 
-export function breakingChangeMessageFactory(rules: Rules) {
+export function breakingChangeMessageFactory(rules: QualifiedRules): () => string {
   return () => {
     const maxLength = valueFromRule(rules['footer-max-length']);
     const MESSAGE = 'Describe the breaking changes';
@@ -50,7 +50,7 @@ export function breakingChangeMessageFactory(rules: Rules) {
   };
 }
 
-export function issuesMessageFactory(rules: Rules) {
+export function issuesMessageFactory(rules: QualifiedRules): () => string {
   return () => {
     const maxLength = valueFromRule(rules['footer-max-length']);
     const MESSAGE = 'Add issue references (e.g. "fix #123", "re #123".)';
@@ -67,7 +67,7 @@ function isFixCommit(answers: Answers) {
   return answers?.type == 'fix' ?? false;
 }
 
-export function breakingTransformFactory(rules: Rules, prefix: string) {
+export function breakingTransformFactory(rules: QualifiedRules, prefix: string): (value: string) => string {
   return (value: string) => {
     const footerMaxLength = valueFromRule(rules['footer-max-length']);
 
@@ -79,7 +79,7 @@ export function breakingTransformFactory(rules: Rules, prefix: string) {
   };
 }
 
-export function issuesTransformerFactory(rules: Rules) {
+export function issuesTransformerFactory(rules: QualifiedRules): (value: string, answers: Answers) => string {
   return (value: string, answers: Answers) => {
     const breaking = answers.breaking ?? '';
 
@@ -93,13 +93,13 @@ export function issuesTransformerFactory(rules: Rules) {
   };
 }
 
-export function footerMaker(questions: Question[], rules: Rules): Question[] {
+export function footerMaker(questions: Question[], rules: QualifiedRules): Question[] {
   const footerQuestions: Question[] = [
     {
       type: 'confirm',
       name: 'isBreaking',
       message: 'Are there any breaking changes?',
-      default: false
+      default: false,
     },
     {
       type: 'input',
@@ -108,14 +108,14 @@ export function footerMaker(questions: Question[], rules: Rules): Question[] {
       when: answers => !!answers.isBreaking,
       validate: validatorFactory(rules),
       transformer: breakingTransformFactory(rules, BREAKING_CHANGE),
-      filter: filterFactory(rules, BREAKING_CHANGE)
+      filter: filterFactory(rules, BREAKING_CHANGE),
     },
     {
       type: 'confirm',
       name: 'isIssue',
       message: 'Does this fix Does this change affect any open issues?',
       when: answers => !isFixCommit(answers),
-      default: false
+      default: false,
     },
     {
       type: 'input',
@@ -124,8 +124,8 @@ export function footerMaker(questions: Question[], rules: Rules): Question[] {
       when: answers => isFixCommit(answers) || !!answers.isIssue,
       validate: validatorFactory(rules),
       transformer: issuesTransformerFactory(rules),
-      filter: filterFactory(rules)
-    }
+      filter: filterFactory(rules),
+    },
   ];
 
   return [...questions, ...footerQuestions];
