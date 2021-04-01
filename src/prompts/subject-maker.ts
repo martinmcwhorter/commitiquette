@@ -14,19 +14,19 @@ export function validatorFactory(rules: QualifiedRules): (value: string, answers
         value: headerValue,
         rule: rules['header-max-length'],
         validator: maxLengthValidator,
-        message: (length) => `Header "${headerValue}" cannot be longer than ${length}`,
+        message: length => `Header "${headerValue}" cannot be longer than ${length}`,
       },
       {
         value,
         rule: rules['subject-max-length'],
         validator: maxLengthValidator,
-        message: (length) => `Subject maximum length of ${length} has been exceeded`,
+        message: length => `Subject maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['subject-min-length'],
         validator: minLengthValidator,
-        message: (length) => `Subject minimum length of ${length} has not been met`,
+        message: length => `Subject minimum length of ${length} has not been met`,
       },
       {
         value,
@@ -48,8 +48,8 @@ export function filterFactory(rules: QualifiedRules): (value: string) => string 
   return (value: string) =>
     pipeWith<string>(
       value,
-      (v) => wordCaseFilter(v, rules['subject-case']),
-      (v) => fullStopFilter(v, rules['subject-full-stop'])
+      v => wordCaseFilter(v, rules['subject-case']),
+      v => fullStopFilter(v, rules['subject-full-stop'])
     );
 }
 

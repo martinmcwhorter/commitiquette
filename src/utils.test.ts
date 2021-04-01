@@ -14,7 +14,7 @@ describe('utils', () => {
 
   describe('pipeWith', () => {
     test('pipes value to function', () => {
-      const result = pipeWith('hello ', (x) => (x += 'world'));
+      const result = pipeWith('hello ', x => (x += 'world'));
 
       expect(result).toBe('hello world');
     });

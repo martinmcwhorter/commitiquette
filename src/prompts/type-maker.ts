@@ -14,13 +14,13 @@ export function validatorFactory(rules: QualifiedRules): (value: string) => stri
         value,
         rule: rules['type-max-length'],
         validator: maxLengthValidator,
-        message: (length) => `Type maximum length of ${length} has been exceeded`,
+        message: length => `Type maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['type-min-length'],
         validator: minLengthValidator,
-        message: (length) => `Type minimum length of ${length} has not been met`,
+        message: length => `Type minimum length of ${length} has not been met`,
       },
       {
         value,
@@ -57,7 +57,7 @@ export function choicesFactory(
   let choices: ChoiceOptions[] | undefined;
   if (typeEnum && typeEnum.length > 0) {
     const longest = getLongest(typeEnum);
-    choices = typeEnum.map((value) => ({
+    choices = typeEnum.map(value => ({
       name: `${value.padEnd(longest)}: ${commitTypes[value]?.description ?? ''}`,
       value: value,
       short: value,
@@ -66,7 +66,7 @@ export function choicesFactory(
 
   return (
     choices ||
-    Object.keys(commitTypes).map((commitType) => ({
+    Object.keys(commitTypes).map(commitType => ({
       name: `${commitType}: ${commitTypes[commitType].description ?? ''}`,
       value: commitType,
       short: commitType,

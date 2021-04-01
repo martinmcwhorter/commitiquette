@@ -13,13 +13,13 @@ export function validatorFactory(rules: QualifiedRules): (value: string) => stri
         value,
         rule: rules['scope-max-length'],
         validator: maxLengthValidator,
-        message: (length) => `Scope maximum length of ${length} has been exceeded`,
+        message: length => `Scope maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['scope-min-length'],
         validator: minLengthValidator,
-        message: (length) => `Scope minimum length of ${length} has not been met`,
+        message: length => `Scope minimum length of ${length} has not been met`,
       },
       {
         value,
@@ -54,7 +54,7 @@ function parseEmptyScopeRule(rule: QualifiedRules['scope-empty']): [boolean, Cho
 function parseScopeEnumRule(rule: QualifiedRules['scope-enum']): [boolean, ChoiceOptions[] | undefined] {
   if (rule !== undefined) {
     const [, , scopeEnum] = rule;
-    return [true, (scopeEnum ?? []).map((scope) => ({ name: scope, value: scope }))];
+    return [true, (scopeEnum ?? []).map(scope => ({ name: scope, value: scope }))];
   }
   return [false, undefined];
 }

@@ -100,7 +100,7 @@ describe('validators', () => {
           value: 'foo',
           rule: [RuleConfigSeverity.Error, 'never', 72],
           validator: () => true,
-          message: (ruleValue) => `error ${ruleValue}`,
+          message: ruleValue => `error ${ruleValue}`,
         },
       ]);
 

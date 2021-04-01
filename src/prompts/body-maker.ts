@@ -11,13 +11,13 @@ export function validatorFactory(rules: QualifiedRules): (value: string) => stri
         value,
         rule: rules['body-max-length'],
         validator: maxLengthValidator,
-        message: (length) => `Body maximum length of ${length} has been exceeded`,
+        message: length => `Body maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['body-min-length'],
         validator: minLengthValidator,
-        message: (length) => `Body minimum length of ${length} has not been met`,
+        message: length => `Body minimum length of ${length} has not been met`,
       },
     ]);
 }
@@ -26,9 +26,9 @@ export function filterFactory(rules: QualifiedRules): (value: string) => string 
   return (value: string) =>
     pipeWith<string>(
       value,
-      (v) => maxLineLengthFilter(v, rules['body-max-line-length']),
-      (v) => leadingBlankFilter(v, rules['body-leading-blank']),
-      (v) => v.replace(/\\n/g, '\n')
+      v => maxLineLengthFilter(v, rules['body-max-line-length']),
+      v => leadingBlankFilter(v, rules['body-leading-blank']),
+      v => v.replace(/\\n/g, '\n')
     );
 }
 
@@ -40,8 +40,8 @@ export function transformerFactory(rules: QualifiedRules): (value: string) => st
   return (value: string) => {
     return pipeWith(
       value,
-      (v) => v.replace(/\\n/g, '\n'),
-      (v) => maxLenTransformer(v)
+      v => v.replace(/\\n/g, '\n'),
+      v => maxLenTransformer(v)
     );
   };
 }
