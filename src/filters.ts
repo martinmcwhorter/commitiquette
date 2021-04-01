@@ -4,7 +4,7 @@ import wordWrap from 'word-wrap';
 import { wordCase } from './utils';
 
 export function leadingBlankFilter(value: string, rule: RuleConfigTuple<undefined> | undefined): string {
-  if (rule === undefined) {
+  if (rule == null) {
     return value;
   }
 
@@ -26,7 +26,7 @@ export function leadingBlankFilter(value: string, rule: RuleConfigTuple<undefine
 }
 
 export function fullStopFilter(value: string, rule: QualifiedRules['subject-full-stop'] | undefined): string {
-  if (rule === undefined) {
+  if (rule == null) {
     return value;
   }
 

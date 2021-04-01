@@ -45,7 +45,7 @@ export function wordCase(value: string, rule: TargetCaseType): string {
 }
 
 export function valueFromRule<T>(rule: RuleConfigTuple<T> | undefined): undefined | T {
-  if (rule === undefined) {
+  if (rule == null) {
     return undefined;
   }
 

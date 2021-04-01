@@ -2,7 +2,7 @@ import type { RuleConfigTuple } from '@commitlint/types';
 import { RuleConfigSeverity } from '@commitlint/types';
 
 export function enumWhen(rule: RuleConfigTuple<string[]> | undefined): boolean {
-  if (rule === undefined) {
+  if (rule == null) {
     return true;
   }
 
@@ -22,7 +22,7 @@ export function enumWhen(rule: RuleConfigTuple<string[]> | undefined): boolean {
 }
 
 export function emptyWhen(rule: RuleConfigTuple<undefined> | undefined): boolean {
-  if (rule === undefined) {
+  if (rule == null) {
     return true;
   }
 

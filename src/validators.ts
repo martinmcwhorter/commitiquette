@@ -17,7 +17,7 @@ export function validate(
 ): string | true {
   const errorMessages: string[] = validators
     .map(v => {
-      if (v.rule === undefined) {
+      if (v.rule == null) {
         return true;
       }
 
