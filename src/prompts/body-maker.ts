@@ -1,28 +1,28 @@
-import { Rules } from '@commitlint/load';
+import type { QualifiedRules } from '@commitlint/types';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
 import { pipeWith, maxLengthTransformerFactory, valueFromRule } from '../utils';
 import { leadingBlankFilter, maxLineLengthFilter } from '../filters';
-import { Question } from '../commit-template';
+import type { Question } from '../commit-template';
 
-export function validatorFactory(rules: Rules) {
+export function validatorFactory(rules: QualifiedRules): (value: string) => string | true {
   return (value: string) =>
     validate([
       {
         value,
         rule: rules['body-max-length'],
         validator: maxLengthValidator,
-        message: length => `Body maximum length of ${length} has been exceeded`
+        message: length => `Body maximum length of ${length} has been exceeded`,
       },
       {
         value,
         rule: rules['body-min-length'],
         validator: minLengthValidator,
-        message: length => `Body minimum length of ${length} has not been met`
-      }
+        message: length => `Body minimum length of ${length} has not been met`,
+      },
     ]);
 }
 
-export function filterFactory(rules: Rules) {
+export function filterFactory(rules: QualifiedRules): (value: string) => string {
   return (value: string) =>
     pipeWith<string>(
       value,
@@ -32,7 +32,7 @@ export function filterFactory(rules: Rules) {
     );
 }
 
-export function transformerFactory(rules: Rules) {
+export function transformerFactory(rules: QualifiedRules): (value: string) => string {
   const maxLength = valueFromRule(rules['body-max-length']);
 
   const maxLenTransformer = maxLength ? maxLengthTransformerFactory(maxLength) : (value: string) => value;
@@ -46,7 +46,7 @@ export function transformerFactory(rules: Rules) {
   };
 }
 
-export function bodyMaker(questions: Question[], rules: Rules): Question[] {
+export function bodyMaker(questions: Question[], rules: QualifiedRules): Question[] {
   const bodyQuestions: Question[] = [
     {
       type: 'input',
@@ -54,8 +54,8 @@ export function bodyMaker(questions: Question[], rules: Rules): Question[] {
       message: 'Provide a longer description of the change: (press enter to skip, \\n for newline)\n',
       validate: validatorFactory(rules),
       filter: filterFactory(rules),
-      transformer: transformerFactory(rules)
-    }
+      transformer: transformerFactory(rules),
+    },
   ];
 
   return [...questions, ...bodyQuestions];

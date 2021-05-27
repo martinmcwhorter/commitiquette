@@ -1,4 +1,5 @@
-import { Level, Rules } from '@commitlint/load';
+import type { RuleConfigQuality, RulesConfig } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
 import { types } from 'conventional-commit-types';
 
 import { filterFactory, choicesFactory, validatorFactory, typeMaker } from './type-maker';
@@ -7,17 +8,25 @@ jest.mock('conventional-commit-types');
 
 describe('type-maker', () => {
   describe('validatorFactory', () => {
-    test.each<[Rules, string, string | true]>([
-      [{ 'type-empty': [Level.Error, 'never', undefined] }, '', 'Type cannot be empty'],
-      [{ 'type-empty': [Level.Error, 'never', undefined] }, 'foo', true],
-      [{ 'type-max-length': [Level.Error, 'always', 3] }, 'too long', 'Type maximum length of 3 has been exceeded'],
-      [{ 'type-max-length': [Level.Error, 'always', 72] }, 'too long', true],
-      [{ 'type-min-length': [Level.Error, 'always', 3] }, 'f', 'Type minimum length of 3 has not been met'],
-      [{ 'type-min-length': [Level.Error, 'always', 3] }, 'foo bar baz', true],
-      [{ 'type-case': [Level.Error, 'never', 'upper-case'] }, 'FOO_BAR', 'Type must not be in upper-case'],
-      [{ 'type-case': [Level.Error, 'never', 'upper-case'] }, 'foo bar', true],
-      [{ 'type-case': [Level.Error, 'always', 'upper-case'] }, 'FOO_BAR', true],
-      [{ 'type-case': [Level.Error, 'always', 'upper-case'] }, 'foo bar', 'Type must be in upper-case']
+    test.each<[Partial<RulesConfig<RuleConfigQuality.Qualified>>, string, string | true]>([
+      [{ 'type-empty': [RuleConfigSeverity.Error, 'never'] }, '', 'Type cannot be empty'],
+      [{ 'type-empty': [RuleConfigSeverity.Error, 'never'] }, 'foo', true],
+      [
+        { 'type-max-length': [RuleConfigSeverity.Error, 'always', 3] },
+        'too long',
+        'Type maximum length of 3 has been exceeded',
+      ],
+      [{ 'type-max-length': [RuleConfigSeverity.Error, 'always', 72] }, 'too long', true],
+      [
+        { 'type-min-length': [RuleConfigSeverity.Error, 'always', 3] },
+        'f',
+        'Type minimum length of 3 has not been met',
+      ],
+      [{ 'type-min-length': [RuleConfigSeverity.Error, 'always', 3] }, 'foo bar baz', true],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'never', 'upper-case'] }, 'FOO_BAR', 'Type must not be in upper-case'],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'never', 'upper-case'] }, 'foo bar', true],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'always', 'upper-case'] }, 'FOO_BAR', true],
+      [{ 'type-case': [RuleConfigSeverity.Error, 'always', 'upper-case'] }, 'foo bar', 'Type must be in upper-case'],
     ])(`should validate rule '%o', value '%s', expected '%s'`, (rules, value, expected) => {
       const factory = validatorFactory(rules);
 
@@ -29,7 +38,7 @@ describe('type-maker', () => {
 
   describe('filterFactory', () => {
     test('should return filter that applies given type-case rule', () => {
-      const factory = filterFactory({ 'type-case': [Level.Error, 'always', 'camel-case'] });
+      const factory = filterFactory({ 'type-case': [RuleConfigSeverity.Error, 'always', 'camel-case'] });
 
       const result = factory('FOO_BAR');
 
@@ -45,92 +54,89 @@ describe('type-maker', () => {
         {
           name: 'feat: A new feature',
           short: 'feat',
-          value: 'feat'
+          value: 'feat',
         },
         {
           name: 'fix: A bug fix',
           short: 'fix',
-          value: 'fix'
+          value: 'fix',
         },
         {
           name: 'docs: Documentation only changes',
           short: 'docs',
-          value: 'docs'
+          value: 'docs',
         },
         {
-          name:
-            'style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)',
+          name: 'style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)',
           short: 'style',
-          value: 'style'
+          value: 'style',
         },
         {
           name: 'refactor: A code change that neither fixes a bug nor adds a feature',
           short: 'refactor',
-          value: 'refactor'
+          value: 'refactor',
         },
         {
           name: 'perf: A code change that improves performance',
           short: 'perf',
-          value: 'perf'
+          value: 'perf',
         },
         {
           name: 'test: Adding missing tests or correcting existing tests',
           short: 'test',
-          value: 'test'
+          value: 'test',
         },
         {
-          name:
-            'build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)',
+          name: 'build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)',
           short: 'build',
-          value: 'build'
+          value: 'build',
         },
         {
-          name:
-            'ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)',
+          name: 'ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)',
           short: 'ci',
-          value: 'ci'
+          value: 'ci',
         },
         {
           name: "chore: Other changes that don't modify src or test files",
           short: 'chore',
-          value: 'chore'
+          value: 'chore',
         },
         {
           name: 'revert: Reverts a previous commit',
           short: 'revert',
-          value: 'revert'
-        }
+          value: 'revert',
+        },
       ]);
     });
 
     describe('should return choices if type-enum exits', () => {
-      const result = choicesFactory({ 'type-enum': [Level.Error, 'always', ['foo', 'bar', 'baz']] }, {});
+      const result = choicesFactory({ 'type-enum': [RuleConfigSeverity.Error, 'always', ['foo', 'bar', 'baz']] }, {});
 
       expect(result).toEqual([
         {
           name: 'foo: ',
           short: 'foo',
-          value: 'foo'
+          value: 'foo',
         },
         {
           name: 'bar: ',
           short: 'bar',
-          value: 'bar'
+          value: 'bar',
         },
         {
           name: 'baz: ',
           short: 'baz',
-          value: 'baz'
-        }
+          value: 'baz',
+        },
       ]);
 
       describe('should return choices with conventional-conmmit-types descriptions', () => {
         const result = choicesFactory(
-          { 'type-enum': [Level.Error, 'always', ['foo', 'bar', 'baz']] },
+          { 'type-enum': [RuleConfigSeverity.Error, 'always', ['foo', 'bar', 'baz']] },
           {
             foo: { description: 'Fooey', title: '' },
             bar: { description: 'Barey', title: '' },
-            baz: { description: 'Bazey', title: '' }
+            baz: { description: 'Bazey', title: '' },
           }
         );
 
@@ -138,29 +144,29 @@ describe('type-maker', () => {
           {
             name: 'foo: Fooey',
             short: 'foo',
-            value: 'foo'
+            value: 'foo',
           },
           {
             name: 'bar: Barey',
             short: 'bar',
-            value: 'bar'
+            value: 'bar',
           },
           {
             name: 'baz: Bazey',
             short: 'baz',
-            value: 'baz'
-          }
+            value: 'baz',
+          },
         ]);
       });
 
       describe('should pad the name to match the longest', () => {
         const result = choicesFactory(
-          { 'type-enum': [Level.Error, 'always', ['foo', 'bar', 'baz', 'very-long']] },
+          { 'type-enum': [RuleConfigSeverity.Error, 'always', ['foo', 'bar', 'baz', 'very-long']] },
           {
             foo: { description: 'Fooey', title: '' },
             bar: { description: 'Barey', title: '' },
             baz: { description: 'Bazey', title: '' },
-            'very-long': { description: 'Longey', title: '' }
+            'very-long': { description: 'Longey', title: '' },
           }
         );
 
@@ -168,23 +174,23 @@ describe('type-maker', () => {
           {
             name: 'foo      : Fooey',
             short: 'foo',
-            value: 'foo'
+            value: 'foo',
           },
           {
             name: 'bar      : Barey',
             short: 'bar',
-            value: 'bar'
+            value: 'bar',
           },
           {
             name: 'baz      : Bazey',
             short: 'baz',
-            value: 'baz'
+            value: 'baz',
           },
           {
             name: 'very-long: Longey',
             short: 'very-long',
-            value: 'very-long'
-          }
+            value: 'very-long',
+          },
         ]);
       });
     });

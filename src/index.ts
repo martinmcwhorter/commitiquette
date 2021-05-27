@@ -1,9 +1,9 @@
 import commitlintLoad from '@commitlint/load';
-import { PromptModule } from 'inquirer';
-import { Commit } from 'commitizen';
+import type { PromptModule } from 'inquirer';
+import type { Commit } from 'commitizen';
 import { engine } from './engine';
 
-export async function prompter(cz: { prompt: PromptModule }, commit: Commit) {
+export async function prompter(cz: { prompt: PromptModule }, commit: Commit): Promise<void> {
   const clConfig = await commitlintLoad();
   engine(clConfig, cz.prompt, commit);
 }

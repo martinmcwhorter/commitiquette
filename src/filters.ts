@@ -1,8 +1,9 @@
-import { Case, Level, Rule } from '@commitlint/load';
+import type { TargetCaseType, RuleConfigTuple, QualifiedRules } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
 import wordWrap from 'word-wrap';
 import { wordCase } from './utils';
 
-export function leadingBlankFilter(value: string, rule: Rule<undefined> | undefined): string {
+export function leadingBlankFilter(value: string, rule: RuleConfigTuple<undefined> | undefined): string {
   if (rule == null) {
     return value;
   }
@@ -13,7 +14,7 @@ export function leadingBlankFilter(value: string, rule: Rule<undefined> | undefi
 
   const [level, applicable] = rule;
 
-  if (level === Level.Disable) {
+  if (level === RuleConfigSeverity.Disabled) {
     return value;
   }
 
@@ -24,14 +25,14 @@ export function leadingBlankFilter(value: string, rule: Rule<undefined> | undefi
   return value.trimLeft();
 }
 
-export function fullStopFilter(value: string, rule: Rule<string> | undefined): string {
+export function fullStopFilter(value: string, rule: QualifiedRules['subject-full-stop'] | undefined): string {
   if (rule == null) {
     return value;
   }
 
-  const [level, applicable, ruleValue] = rule;
+  const [level, applicable, ruleValue = '.'] = rule;
 
-  if (level === Level.Disable) {
+  if (level === RuleConfigSeverity.Disabled) {
     return value;
   }
 
@@ -42,7 +43,10 @@ export function fullStopFilter(value: string, rule: Rule<string> | undefined): s
   return value.trimRight().endsWith(ruleValue) ? value : value.trimRight() + ruleValue;
 }
 
-export function wordCaseFilter(value: string, rule: Rule<Case | Case[]> | undefined): string {
+export function wordCaseFilter(
+  value: string,
+  rule: RuleConfigTuple<TargetCaseType | TargetCaseType[]> | undefined
+): string {
   if (rule == null) {
     return value;
   }
@@ -53,7 +57,7 @@ export function wordCaseFilter(value: string, rule: Rule<Case | Case[]> | undefi
     return value;
   }
 
-  if (level === Level.Disable) {
+  if (level === RuleConfigSeverity.Disabled) {
     return value;
   }
 
@@ -64,14 +68,14 @@ export function wordCaseFilter(value: string, rule: Rule<Case | Case[]> | undefi
   return wordCase(value, ruleValue);
 }
 
-export function maxLineLengthFilter(value: string, rule: Rule<number> | undefined): string {
+export function maxLineLengthFilter(value: string, rule: RuleConfigTuple<number> | undefined): string {
   if (rule == null) {
     return value;
   }
 
   const [level, applicable, ruleValue] = rule;
 
-  if (level === Level.Disable) {
+  if (level === RuleConfigSeverity.Disabled) {
     return value;
   }
 
