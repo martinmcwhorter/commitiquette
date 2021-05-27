@@ -67,8 +67,7 @@ describe('type-maker', () => {
           value: 'docs',
         },
         {
-          name:
-            'style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)',
+          name: 'style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)',
           short: 'style',
           value: 'style',
         },
@@ -88,14 +87,12 @@ describe('type-maker', () => {
           value: 'test',
         },
         {
-          name:
-            'build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)',
+          name: 'build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)',
           short: 'build',
           value: 'build',
         },
         {
-          name:
-            'ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)',
+          name: 'ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)',
           short: 'ci',
           value: 'ci',
         },
