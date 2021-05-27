@@ -54,7 +54,7 @@
   },
   "peerDependencies": {
     "@commitlint/cli": "^12.0.1",
-    "commitizen": "4.2.3"
+    "commitizen": "^4.2.4"
   },
   "lint-staged": {
     "*.{css,json,md}": [
