@@ -46,7 +46,8 @@ export function issueFilterFactory(rules: QualifiedRules): InquirerQuestion<Answ
     return pipeWith<string>(
       value,
       v => maxLineLengthFilter(v, rules['footer-max-line-length']),
-      v => (answers.isBreaking ? '\n\n' : '') + v
+      v => leadingBlankFilter(v, rules['footer-leading-blank']),
+      v => (answers.isBreaking ? '\n' : '') + v
     );
   };
 }
