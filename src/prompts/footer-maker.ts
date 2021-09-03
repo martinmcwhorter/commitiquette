@@ -1,5 +1,5 @@
 import type { QualifiedRules } from '@commitlint/types';
-import type { Question as InquirerQuestion, Transformer } from 'inquirer';
+import type { Question as InquirerQuestion } from 'inquirer';
 import { valueFromRule, maxLengthTransformerFactory, pipeWith } from '../utils';
 import type { Answers, Question } from '../commit-template';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
