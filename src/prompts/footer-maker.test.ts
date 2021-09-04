@@ -1,5 +1,10 @@
 import { QualifiedRules, RuleConfigSeverity } from '@commitlint/types';
-import { breakingChangeFilterFactory, breakingChangeMessageFactory, issueFilterFactory } from './footer-maker';
+import {
+  breakingChangeFilterFactory,
+  breakingChangeMessageFactory,
+  issueFilterFactory,
+  issuesMessageFactory,
+} from './footer-maker';
 
 describe('footerMaker', () => {
   describe('breakingChangeFilterFactory', () => {
@@ -32,6 +37,17 @@ describe('footerMaker', () => {
 
       const result = fixture();
       expect(result).toBe('Describe the breaking changes (max 50 chars):\n');
+    });
+  });
+
+  describe('issuesMessageFactory', () => {
+    it('should show a message when footer has maximum length rule', () => {
+      const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Error, 'always', 88] };
+
+      const fixture = issuesMessageFactory(rules);
+
+      const result = fixture();
+      expect(result).toBe('Add issue references (e.g. "fix #123", "re #123".) (max 88 chars):\n');
     });
   });
 });
