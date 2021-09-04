@@ -33,7 +33,7 @@ describe('footerMaker', () => {
   });
 
   describe('breakingChangeMessageFactory', () => {
-    it('should show a message when footer has maximum length rule', () => {
+    it('should show a message when footer has maximum length rule set', () => {
       const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Error, 'always', 50] };
 
       const fixture = breakingChangeMessageFactory(rules);
@@ -41,16 +41,34 @@ describe('footerMaker', () => {
       const result = fixture();
       expect(result).toBe('Describe the breaking changes (max 50 chars):\n');
     });
+
+    it('should show a message when footer has not maximum length rule set', () => {
+      const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Disabled, 'always', 50] };
+
+      const fixture = breakingChangeMessageFactory(rules);
+
+      const result = fixture();
+      expect(result).toBe('Describe the breaking changes:\n');
+    });
   });
 
   describe('issuesMessageFactory', () => {
-    it('should show a message when footer has maximum length rule', () => {
+    it('should show a message when footer has maximum length rule set', () => {
       const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Error, 'always', 88] };
 
       const fixture = issuesMessageFactory(rules);
 
       const result = fixture();
       expect(result).toBe('Add issue references (e.g. "fix #123", "re #123".) (max 88 chars):\n');
+    });
+
+    it('should show a message when footer has not maximum length rule set', () => {
+      const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Disabled, 'always', 88] };
+
+      const fixture = issuesMessageFactory(rules);
+
+      const result = fixture();
+      expect(result).toBe('Add issue references (e.g. "fix #123", "re #123".):\n');
     });
   });
 
