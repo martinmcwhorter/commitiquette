@@ -1,11 +1,12 @@
 import { QualifiedRules, RuleConfigSeverity } from '@commitlint/types';
-import { red } from 'chalk';
+import { green, red } from 'chalk';
 import {
   breakingChangeFilterFactory,
   breakingChangeMessageFactory,
   breakingTransformFactory,
   issueFilterFactory,
   issuesMessageFactory,
+  issuesTransformerFactory,
 } from './footer-maker';
 
 describe('footerMaker', () => {
@@ -67,6 +68,40 @@ describe('footerMaker', () => {
           '(141) The coverage has decreased with this PR, please add tests for the additional functions to at least bring the coverage to the same percentage.'
         )
       );
+    });
+  });
+
+  describe('issuesTransformerFactory', () => {
+    describe('with a breaking change', () => {
+      it('should show a message in green color when footer has maximum length rule', () => {
+        const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Error, 'always', 60] };
+
+        const fixture = issuesTransformerFactory(rules);
+
+        const result = fixture("If you haven't seen Game of Thrones, go watch it right now.", {
+          isBreaking: true,
+          breaking: 'Some big change',
+        });
+        expect(result).toBe(green("(59) If you haven't seen Game of Thrones, go watch it right now."));
+      });
+    });
+
+    describe('without a breaking change', () => {
+      it('should show a message in red color when footer has maximum length rule', () => {
+        const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Error, 'always', 88] };
+
+        const fixture = issuesTransformerFactory(rules);
+
+        const result = fixture(
+          "If you haven't seen Game of Thrones, go watch it right now. If you have then you'll totally get why this Hodor themed lorem ipsum generator is just brilliant.",
+          { isBreaking: false }
+        );
+        expect(result).toBe(
+          red(
+            "(158) If you haven't seen Game of Thrones, go watch it right now. If you have then you'll totally get why this Hodor themed lorem ipsum generator is just brilliant."
+          )
+        );
+      });
     });
   });
 });
