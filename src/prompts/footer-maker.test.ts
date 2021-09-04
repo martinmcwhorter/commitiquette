@@ -1,7 +1,9 @@
 import { QualifiedRules, RuleConfigSeverity } from '@commitlint/types';
+import { red } from 'chalk';
 import {
   breakingChangeFilterFactory,
   breakingChangeMessageFactory,
+  breakingTransformFactory,
   issueFilterFactory,
   issuesMessageFactory,
 } from './footer-maker';
@@ -48,6 +50,23 @@ describe('footerMaker', () => {
 
       const result = fixture();
       expect(result).toBe('Add issue references (e.g. "fix #123", "re #123".) (max 88 chars):\n');
+    });
+  });
+
+  describe('breakingTransformFactory', () => {
+    it('should show a message in red color when footer has maximum length rule', () => {
+      const rules: QualifiedRules = { 'footer-max-length': [RuleConfigSeverity.Error, 'always', 88] };
+
+      const fixture = breakingTransformFactory(rules, 'BREAKING CHANGE: ');
+
+      const result = fixture(
+        'The coverage has decreased with this PR, please add tests for the additional functions to at least bring the coverage to the same percentage.'
+      );
+      expect(result).toBe(
+        red(
+          '(141) The coverage has decreased with this PR, please add tests for the additional functions to at least bring the coverage to the same percentage.'
+        )
+      );
     });
   });
 });
