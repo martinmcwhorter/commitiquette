@@ -95,13 +95,11 @@ export function breakingTransformFactory(rules: QualifiedRules, prefix: string):
 }
 
 export function issuesTransformerFactory(rules: QualifiedRules): (value: string, answers: Answers) => string {
-  return (value: string, answers: Answers) => {
-    const breaking = answers.breaking ?? '';
-
+  return (value: string) => {
     const footerMaxLength = valueFromRule(rules['footer-max-length']);
 
     if (footerMaxLength) {
-      return maxLengthTransformerFactory(footerMaxLength - breaking.length)(value);
+      return maxLengthTransformerFactory(footerMaxLength)(value);
     }
 
     return value;
