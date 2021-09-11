@@ -1,4 +1,5 @@
 import type { QualifiedRules } from '@commitlint/types';
+import type { Question as InquirerQuestion } from 'inquirer';
 import { valueFromRule, maxLengthTransformerFactory, pipeWith } from '../utils';
 import type { Answers, Question } from '../commit-template';
 import { validate, maxLengthValidator, minLengthValidator } from '../validators';
@@ -27,14 +28,28 @@ export function validatorFactory(rules: QualifiedRules): (value: string, answers
   };
 }
 
-export function filterFactory(rules: QualifiedRules, prefix = '') {
-  return (value: string): string =>
+export function breakingChangeFilterFactory(
+  rules: QualifiedRules,
+  prefix: string
+): InquirerQuestion<Answers>['filter'] {
+  return value =>
     pipeWith<string>(
       value,
       v => prefix + v,
-      v => leadingBlankFilter(v, rules['footer-leading-blank']),
-      v => maxLineLengthFilter(v, rules['footer-max-line-length'])
+      v => maxLineLengthFilter(v, rules['footer-max-line-length']),
+      v => leadingBlankFilter(v, rules['footer-leading-blank'])
     );
+}
+
+export function issueFilterFactory(rules: QualifiedRules): InquirerQuestion<Answers>['filter'] {
+  return (value, answers): string => {
+    return pipeWith<string>(
+      value,
+      v => maxLineLengthFilter(v, rules['footer-max-line-length']),
+      v => leadingBlankFilter(v, rules['footer-leading-blank']),
+      v => (answers.isBreaking ? '\n' : '') + v
+    );
+  };
 }
 
 export function breakingChangeMessageFactory(rules: QualifiedRules): () => string {
@@ -80,13 +95,11 @@ export function breakingTransformFactory(rules: QualifiedRules, prefix: string):
 }
 
 export function issuesTransformerFactory(rules: QualifiedRules): (value: string, answers: Answers) => string {
-  return (value: string, answers: Answers) => {
-    const breaking = answers.breaking ?? '';
-
+  return (value: string) => {
     const footerMaxLength = valueFromRule(rules['footer-max-length']);
 
     if (footerMaxLength) {
-      return maxLengthTransformerFactory(footerMaxLength - breaking.length)(value);
+      return maxLengthTransformerFactory(footerMaxLength)(value);
     }
 
     return value;
@@ -108,7 +121,7 @@ export function footerMaker(questions: Question[], rules: QualifiedRules): Quest
       when: answers => !!answers.isBreaking,
       validate: validatorFactory(rules),
       transformer: breakingTransformFactory(rules, BREAKING_CHANGE),
-      filter: filterFactory(rules, BREAKING_CHANGE),
+      filter: breakingChangeFilterFactory(rules, BREAKING_CHANGE),
     },
     {
       type: 'confirm',
@@ -124,7 +137,7 @@ export function footerMaker(questions: Question[], rules: QualifiedRules): Quest
       when: answers => isFixCommit(answers) || !!answers.isIssue,
       validate: validatorFactory(rules),
       transformer: issuesTransformerFactory(rules),
-      filter: filterFactory(rules),
+      filter: issueFilterFactory(rules),
     },
   ];
 

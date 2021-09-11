@@ -1,5 +1,5 @@
 import type { QualifiedRules } from '@commitlint/types';
-import type { Answers as InquirerAnswers, ChoiceOptions, ListQuestion } from 'inquirer';
+import type { ChoiceOptions, ListQuestion } from 'inquirer';
 import { types, CommitType } from 'conventional-commit-types';
 import { getLongest } from '../utils';
 import { caseValidator, emptyValidator, maxLengthValidator, minLengthValidator, validate } from '../validators';
@@ -46,7 +46,7 @@ export function choicesFactory(
   rules: QualifiedRules,
   commitTypes: CommitType
 ):
-  | ChoiceOptions<InquirerAnswers>[]
+  | ChoiceOptions[]
   | {
       name: string;
       value: string;
