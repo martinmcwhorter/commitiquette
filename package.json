@@ -1,6 +1,6 @@
 {
   "name": "commitiquette",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Plugin for commitizen to use commitLint config",
   "main": "dist/index.js",
   "scripts": {
