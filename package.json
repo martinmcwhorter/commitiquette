@@ -32,7 +32,7 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-unicorn": "^35.0.0",
+    "eslint-plugin-unicorn": "^40.1.0",
     "husky": "^8.0.1",
     "jest": "^27.0.1",
     "lint-staged": "^13.0.3",
