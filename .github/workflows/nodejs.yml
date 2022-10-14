@@ -26,5 +26,3 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         flags: unittests
         name: codecov-umbrella
-    - run: npm run lint
-    - uses: wagoid/commitlint-github-action@v1
