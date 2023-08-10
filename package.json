@@ -21,7 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "^13.2.1",
     "@commitlint/config-conventional": "^13.1.0",
-    "@commitlint/load": "^13.1.0",
+    "@commitlint/load": "^17.7.1",
     "@commitlint/types": "^13.1.0",
     "@types/inquirer": "^9.0.2",
     "@types/jest": "^27.0.1",
